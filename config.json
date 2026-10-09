@@ -2,21 +2,15 @@
   "ns_base": "/robobo/robot_0/base",
   "ns_smartphone": "/robobo/robot_0/smartphone",
   "ns_sim": "/robobo/robot_0/sim",
-  "ns_sim_guia": "/robobo/robot_1/sim",
 
   "blob_color": "green",
   "blob_x_max": 100.0,
-  "blob_y_max": 100.0,
   "blob_size_min": 0.0,
 
   "s_max": 250.0,
   "s_objetivo": 0.65,
   "s_cerca": 0.85,
   "s_choque": 0.97,
-  "d_max": 0.20,
-
-  "usar_y": false,
-  "usar_variacion_tamano": false,
 
   "tilt_angulo": 90.0,
   "tilt_velocidad": 10.0,
@@ -27,7 +21,5 @@
 
   "paso_s": 0.2,
   "espera_max_s": 3.0,
-  "pasos_perdido_max": 10,
-
-  "dist_colision_mm": 200.0
+  "pasos_perdido_max": 10
 }

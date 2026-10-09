@@ -33,9 +33,6 @@ USO (primera implementación: guía a velocidad constante)
   5. Evaluar la política aprendida (determinista):
          python3 p1_entrenar.py --evaluar --episodios 10
 
-  Opción --pose-guia: usa la posición del guía (segundo contenedor con
-  sólo el módulo sim) para detectar la colisión con la distancia real.
-
 Los episodios se registran en p1_logs/monitor_<alg>.monitor.csv (una
 fila por episodio), para hacer después las curvas de aprendizaje con
 Matplotlib (apartado 9.1).
@@ -53,10 +50,6 @@ from env import RoboboSeguirEnv, calibrar
 RUTA_MODELO = 'p1_modelo'
 RUTA_LOGS = 'p1_logs'
 
-
-# =====================================================================
-# Hiperparámetros (los mismos del ejemplo)
-# =====================================================================
 
 HIPER_SAC = dict(
     learning_rate=3e-4,
@@ -100,9 +93,6 @@ def cargar_algoritmo(nombre, ruta, env):
     return clase.load(ruta, env=env)
 
 
-# =====================================================================
-# Modos de ejecución
-# =====================================================================
 
 def modo_comprobar(args):
     from stable_baselines3.common.env_checker import check_env
@@ -176,10 +166,6 @@ def modo_evaluar(args):
         env.close()
 
 
-# =====================================================================
-# Ejecución de episodios y métricas
-# =====================================================================
-
 def resumen(env, politica, episodios, titulo):
     recompensas = []
     longitudes = []
@@ -231,15 +217,10 @@ def resumen(env, politica, episodios, titulo):
     print('choques           {}/{}'.format(choques, episodios))
 
 
-# =====================================================================
-# Construcción del entorno y línea de órdenes
-# =====================================================================
-
 def crear_env(args):
     return RoboboSeguirEnv(
         pasos_max=args.pasos_max,
         usar_simulador=not args.sin_simulador,
-        usar_pose_guia=args.pose_guia,
         verbose=args.detalle)
 
 
@@ -267,8 +248,6 @@ def main():
                    help='longitud máxima de un episodio')
     p.add_argument('--sin-simulador', action='store_true',
                    help='no usar el módulo sim; reinicio a mano')
-    p.add_argument('--pose-guia', action='store_true',
-                   help='usar la posición del guía (2º contenedor sim)')
     p.add_argument('--detalle', action='store_true',
                    help='imprime una línea por paso')
 

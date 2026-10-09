@@ -1,0 +1,36 @@
+Seguimiento de un vehículo en la ciudad
+        
+    Observación (Box, float32, dimensión 7)
+        [0]     visible: 1 si el detector ve el blob verde, 0 si no
+
+        [1]     x del blob, centrada y normalizada, en [-1, 1]
+
+        [2]     tamaño del blob dividido por S_max y recortado, en [0, 1]
+
+                ###y del blob dividida por Y_max y recortada, en [0, 1] (no creo que haga falta)
+
+                ###variación del tamaño respecto al paso anterior, dividida
+                por D_max y recortada, en [-1, 1] (esto en principio no)
+
+        [3]     velocidad lineal ordenada en el paso anterior, en [-1, 1]
+
+        [4]     velocidad angular ordenada en el paso anterior, en [-1, 1]
+
+        Cuando la pelota no se ve: visible = 0, tamaño, y y variación = 0, y
+        se conserva la última x, que indica hacia qué lado se perdió el guía.
+
+    Acción (Box, float32, dimensión 2)
+        [0]     velocidad lineal, en [-1, 1], reescalada a [V_MIN, V_MAX]
+        
+        [1]     velocidad angular, en [-1, 1], reescalada a [-W_MAX, W_MAX]
+
+    Recompensa
+        Distancia: recompensa por mantener el tamaño del blob cerca de S_objetivo.
+        Centrado: recompensa por mantener el blob cerca del centro de la imagen (x ≈ 0).
+        Visibilidad: penalización si se pierde el vehículo guía.
+        Seguridad: penalización fuerte si se acerca demasiado y por colisión.
+
+    Reinicio aprendizaje
+        Colisión
+        Pérdida robot guía durante demasiado tiempo
+        Tiempo máximo episodio alcanzado

@@ -23,13 +23,6 @@ REQUISITOS
        ros2 run robobo_ros2 robobo_container --ros-args \\
             -p ip:=host.docker.internal -p modules:="['blob','sim']"
 
-3. (Opcional) Segundo contenedor con el índice del guía y sólo el módulo
-   sim, para conocer su posición (verdad del terreno). Se usa para
-   detectar la colisión (distancia entre centros < 0,20 m) y registrar
-   la separación. Sin él, la colisión se aproxima con el tamaño del blob.
-   Los parámetros robot_name / robot_id dependen de cómo numere el
-   simulador al guía; comprobarlo con `ros2 topic list`.
-
 --------------------------------------------------------------------
 SOBRE LOS TIPOS DE MENSAJE
 --------------------------------------------------------------------
@@ -71,9 +64,6 @@ from geometry_msgs.msg import Twist
 from rosidl_runtime_py.utilities import get_message, get_service
 
 
-# =====================================================================
-# Configuración (archivo externo)
-# =====================================================================
 
 RUTA_CONFIG = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            'config.json')
@@ -83,10 +73,6 @@ def cargar_config(ruta=RUTA_CONFIG):
     with open(ruta) as f:
         return json.load(f)
 
-
-# =====================================================================
-# Utilidades ROS 2: descubrir tipos en el grafo
-# =====================================================================
 
 def _esperar_tipo(nodo, nombre, servicio=False, espera_s=5.0):
     """Devuelve la cadena de tipo (p. ej. 'pkg/msg/Tipo') de un tópico o
@@ -142,28 +128,18 @@ def _blob_de_color(msg, color, size_min=0.0):
     return None
 
 
-# =====================================================================
-# El entorno
-# =====================================================================
-
 class RoboboSeguirEnv(gym.Env):
     """Seguimiento del vehículo guía en la ciudad de RoboboSim.
 
-    Observación (Box, float32) — según espacios.txt
+    Observación (Box, float32, dimensión 5) — según espacios.txt
         [0]  visible: 1 si el detector ve el blob verde, 0 si no
         [1]  x del blob, centrada y normalizada, en [-1, 1]
         [2]  tamaño del blob / S_max, recortado, en [0, 1]
-        (opcional, usar_y)                 y del blob / Y_max, en [0, 1]
-        (opcional, usar_variacion_tamano)  Δtamaño / D_max, en [-1, 1]
-        [-2] velocidad lineal ordenada en el paso anterior, en [-1, 1]
-        [-1] velocidad angular ordenada en el paso anterior, en [-1, 1]
+        [3]  velocidad lineal ordenada en el paso anterior, en [-1, 1]
+        [4]  velocidad angular ordenada en el paso anterior, en [-1, 1]
 
-        En espacios.txt la y y la variación de tamaño están marcadas como
-        "no creo que haga falta" / "en principio no", así que vienen
-        desactivadas en p1_config.json: la dimensión por defecto es 5.
-
-        Cuando la pelota no se ve: visible = 0; tamaño, y y variación = 0;
-        se conserva la última x, que indica hacia qué lado se perdió.
+        Cuando la pelota no se ve: visible = 0 y tamaño = 0; se conserva
+        la última x, que indica hacia qué lado se perdió.
 
         Toda la observación procede de sensores del seguidor por ROS 2
         (blobs + órdenes propias). Nada del módulo sim (apartado 4).
@@ -182,7 +158,7 @@ class RoboboSeguirEnv(gym.Env):
 
     metadata = {'render_modes': []}
 
-    def __init__(self, pasos_max=200, usar_simulador=True, usar_pose_guia=False,
+    def __init__(self, pasos_max=200, usar_simulador=True,
                  verbose=False, config=None):
         super().__init__()
 
@@ -229,30 +205,20 @@ class RoboboSeguirEnv(gym.Env):
                 self._fijar_tilt()
 
         # -------------------------------------------------- simulador
-        # Canal privilegiado: reinicio, y poses para colisión / métricas.
+        # Canal privilegiado: reinicio de la escena y pose del seguidor
+        # (esta última sólo para registro).
         self.usar_simulador = usar_simulador
         self._cli_reset = None
         self._sim_lib = None
         self._pose = None
-        self._pose_guia = None
         if usar_simulador:
             self._preparar_reset()
             self._suscribir_pose(c['ns_sim'] + '/robot_location', '_pose')
-            if usar_pose_guia:
-                self._suscribir_pose(c['ns_sim_guia'] + '/robot_location',
-                                     '_pose_guia')
 
         # -------------------------------------------------- espacios
-        n_extra = int(c['usar_y']) + int(c['usar_variacion_tamano'])
-        low = [0.0, -1.0, 0.0]
-        high = [1.0, 1.0, 1.0]
-        if c['usar_y']:
-            low.append(0.0); high.append(1.0)
-        if c['usar_variacion_tamano']:
-            low.append(-1.0); high.append(1.0)
-        low += [-1.0, -1.0]
-        high += [1.0, 1.0]
-        assert len(low) == 5 + n_extra
+        #          visible    x     tamaño   v     w
+        low = [0.0, -1.0, 0.0, -1.0, -1.0]
+        high = [1.0, 1.0, 1.0, 1.0, 1.0]
         self.observation_space = spaces.Box(
             low=np.array(low, dtype=np.float32),
             high=np.array(high, dtype=np.float32), dtype=np.float32)
@@ -265,13 +231,10 @@ class RoboboSeguirEnv(gym.Env):
         self.pasos_perdido = 0
         self.ultima_accion = np.zeros(2, dtype=np.float32)
         self._ultima_x = 0.0
-        self._tamano_previo = 0.0
 
         self._esperar_lectura_nueva(inicial=True)
 
-    # -----------------------------------------------------------------
-    # Comunicación con ROS 2
-    # -----------------------------------------------------------------
+
 
     def _cb_blobs(self, msg):
         """Se ejecuta dentro de spin_once. Guarda el blob verde (o None)."""
@@ -350,9 +313,6 @@ class RoboboSeguirEnv(gym.Env):
             self._publicar_velocidad(0.0, 0.0)
             time.sleep(0.05)
 
-    # -----------------------------------------------------------------
-    # Canal privilegiado del simulador
-    # -----------------------------------------------------------------
 
     def _preparar_reset(self):
         """Cliente del servicio de reinicio del módulo sim, por ROS 2.
@@ -413,46 +373,24 @@ class RoboboSeguirEnv(gym.Env):
             self._sim_lib.resetSimulation()
         time.sleep(0.5)
 
-    def _distancia_guia_mm(self):
-        """Distancia entre centros (verdad del terreno). None si no hay
-        poses. Sólo para colisión y métricas, nunca para la observación."""
-        if self._pose is None or self._pose_guia is None:
-            return None
-        dx = self._pose[0] - self._pose_guia[0]
-        dz = self._pose[1] - self._pose_guia[1]
-        return float(np.hypot(dx, dz))
-
-    # -----------------------------------------------------------------
-    # Observación
-    # -----------------------------------------------------------------
 
     def _medidas_blob(self):
-        """(visible, x, size, y) normalizados a partir del último blob."""
+        """(visible, x, size) normalizados a partir del último blob."""
         c = self.cfg
         if self._blob is None:
-            return 0.0, self._ultima_x, 0.0, 0.0
-        bx, by, bs = self._blob
+            return 0.0, self._ultima_x, 0.0
+        bx, _, bs = self._blob
         x = (bx - c['blob_x_max'] / 2.0) / (c['blob_x_max'] / 2.0)
         x = float(np.clip(x, -1.0, 1.0))
         s = float(np.clip(bs / c['s_max'], 0.0, 1.0))
-        y = float(np.clip(by / c['blob_y_max'], 0.0, 1.0))
         self._ultima_x = x
-        return 1.0, x, s, y
+        return 1.0, x, s
 
-    def _observacion(self, visible, x, s, y):
-        obs = [visible, x, s]
-        if self.cfg['usar_y']:
-            obs.append(y)
-        if self.cfg['usar_variacion_tamano']:
-            d = (s - self._tamano_previo) / self.cfg['d_max'] if visible else 0.0
-            obs.append(float(np.clip(d, -1.0, 1.0)))
-        obs += list(self.ultima_accion)
-        self._tamano_previo = s
+    def _observacion(self, visible, x, s):
+        obs = [visible, x, s] + list(self.ultima_accion)
         return np.array(obs, dtype=np.float32)
 
-    # -----------------------------------------------------------------
-    # Recompensa
-    # -----------------------------------------------------------------
+
 
     def _recompensa(self, visible, x, s, choque, perdido):
         """Los cuatro términos de espacios.txt. Coeficientes iniciales,
@@ -491,9 +429,6 @@ class RoboboSeguirEnv(gym.Env):
             r += R_PERDIDO
         return float(r)
 
-    # -----------------------------------------------------------------
-    # Interfaz de Gymnasium
-    # -----------------------------------------------------------------
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed)
@@ -509,15 +444,14 @@ class RoboboSeguirEnv(gym.Env):
         self.pasos_perdido = 0
         self.ultima_accion = np.zeros(2, dtype=np.float32)
         self._ultima_x = 0.0
-        self._tamano_previo = 0.0
 
         # Descartar lo acumulado durante el reinicio y esperar una lectura
         # tomada ya en la posición nueva.
         self._vaciar_cola()
         self._esperar_lectura_nueva()
 
-        visible, x, s, y = self._medidas_blob()
-        return self._observacion(visible, x, s, y), {}
+        visible, x, s = self._medidas_blob()
+        return self._observacion(visible, x, s), {}
 
     def step(self, accion):
         c = self.cfg
@@ -538,16 +472,13 @@ class RoboboSeguirEnv(gym.Env):
 
         # 5. Evaluar
         self.pasos += 1
-        visible, x, s, y = self._medidas_blob()
+        visible, x, s = self._medidas_blob()
 
         self.pasos_perdido = 0 if visible else self.pasos_perdido + 1
         perdido = self.pasos_perdido >= c['pasos_perdido_max']
 
-        dist = self._distancia_guia_mm()
-        if dist is not None:
-            choque = dist < c['dist_colision_mm']
-        else:
-            choque = bool(visible and s >= c['s_choque'])
+        # Colisión aproximada por el tamaño del blob (guía demasiado cerca)
+        choque = bool(visible and s >= c['s_choque'])
 
         r = self._recompensa(visible, x, s, choque, perdido)
 
@@ -562,21 +493,18 @@ class RoboboSeguirEnv(gym.Env):
             'tamano': s,
             'choque': choque,
             'perdido': perdido,
-            # Verdad del terreno, sólo para registro
+            # Pose real del seguidor (mm, grados), sólo para registro
             'pose_sim': self._pose,
-            'pose_guia': self._pose_guia,
-            'distancia_mm': dist,
         }
 
         if self.verbose:
             print('paso {:3d}  vis={:d} x={:+.2f} s={:.2f}  v={:+.3f} '
-                  'w={:+.3f}  r={:+.3f}{}{}'.format(
+                  'w={:+.3f}  r={:+.3f}{}'.format(
                       self.pasos, int(visible), x, s, v, w, r,
-                      '' if dist is None else '  d={:.0f}mm'.format(dist),
                       '  CHOQUE' if choque else
                       ('  PERDIDO' if perdido else '')))
 
-        return self._observacion(visible, x, s, y), r, terminated, truncated, info
+        return self._observacion(visible, x, s), r, terminated, truncated, info
 
     def close(self):
         try:
@@ -594,22 +522,17 @@ class RoboboSeguirEnv(gym.Env):
             pass
 
 
-# =====================================================================
-# Utilidad de calibración
-# =====================================================================
-
 def calibrar():
     """Imprime en continuo el blob verde (bruto y normalizado).
 
     Sirve para fijar en p1_config.json:
       - blob_x_max: el valor de x con la pelota en el borde derecho
         (x centrada ≈ 0 con la pelota en el centro de la imagen).
-      - s_max: tamaño bruto máximo observado (guía casi tocando).
-      - s_objetivo: tamaño normalizado a la separación deseada
-        (banda objetivo del anexo B: 0,25–0,50 m).
-      - s_cerca / s_choque: tamaños a ~0,25 m y a ~0,20 m (colisión).
-    Con el segundo contenedor del guía en marcha se puede relacionar el
-    tamaño con la distancia real (verdad del terreno). Ctrl-C para salir.
+      - s_max: tamaño bruto máximo observado antes de que la pelota
+        empiece a cortarse por el borde inferior de la imagen.
+      - s_objetivo: tamaño normalizado a la separación deseada.
+      - s_cerca / s_choque: tamaños demasiado cerca / casi tocando.
+    Ctrl-C para salir.
     """
     cfg = cargar_config()
     if not rclpy.ok():
@@ -621,7 +544,7 @@ def calibrar():
         raise SystemExit('No aparece ' + topico)
     print('Tipo de {}: {}'.format(topico, tipo))
 
-    estado = {'blob': None, 'n': 0, 'pose': None, 'guia': None}
+    estado = {'blob': None, 'n': 0}
 
     def cb(m):
         estado['blob'] = _blob_de_color(m, cfg['blob_color'],
@@ -629,35 +552,22 @@ def calibrar():
         estado['n'] += 1
     nodo.create_subscription(get_message(tipo), topico, cb, 1)
 
-    for clave, ns in (('pose', cfg['ns_sim']), ('guia', cfg['ns_sim_guia'])):
-        t = _esperar_tipo(nodo, ns + '/robot_location', espera_s=1.0)
-        if t is not None:
-            nodo.create_subscription(
-                get_message(t), ns + '/robot_location',
-                lambda m, k=clave: estado.__setitem__(
-                    k, (m.position.x, m.position.z)), 1)
-
     # La última columna cuenta los mensajes de color_blobs recibidos: si no
     # crece, la lectura está congelada (puente o simulador parados).
-    print('{:>8s} {:>8s} {:>8s}   {:>6s} {:>6s}   {:>8s}   {:>6s}'.format(
-        'x', 'y', 'size', 'x_norm', 's_norm', 'dist_mm', 'msgs'))
+    print('{:>8s} {:>8s} {:>8s}   {:>6s} {:>6s}   {:>6s}'.format(
+        'x', 'y', 'size', 'x_norm', 's_norm', 'msgs'))
     try:
         while rclpy.ok():
             rclpy.spin_once(nodo, timeout_sec=0.5)
-            dist = '{:>8s}'.format('-')
-            if estado['pose'] and estado['guia']:
-                dist = '{:8.0f}'.format(np.hypot(
-                    estado['pose'][0] - estado['guia'][0],
-                    estado['pose'][1] - estado['guia'][1]))
             b = estado['blob']
             if b is None:
-                print('{:>8s}   (no se ve la pelota)            {}   {:6d}'.format(
-                    '-', dist, estado['n']))
+                print('{:>8s}   (no se ve la pelota)            {:6d}'.format(
+                    '-', estado['n']))
             else:
                 xn = (b[0] - cfg['blob_x_max'] / 2) / (cfg['blob_x_max'] / 2)
                 sn = min(b[2] / cfg['s_max'], 1.0)
-                print('{:8.1f} {:8.1f} {:8.1f}   {:+6.2f} {:6.2f}   {}   {:6d}'.format(
-                    b[0], b[1], b[2], xn, sn, dist, estado['n']))
+                print('{:8.1f} {:8.1f} {:8.1f}   {:+6.2f} {:6.2f}   {:6d}'.format(
+                    b[0], b[1], b[2], xn, sn, estado['n']))
             time.sleep(0.2)
     except KeyboardInterrupt:
         pass
