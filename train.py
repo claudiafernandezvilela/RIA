@@ -36,6 +36,11 @@ USO (primera implementación: guía a velocidad constante)
 Los episodios se registran en p1_logs/monitor_<alg>.monitor.csv (una
 fila por episodio), para hacer después las curvas de aprendizaje con
 Matplotlib (apartado 9.1).
+
+Con --etiqueta (p. ej. --etiqueta c3) el modelo y el monitor se guardan
+como p1_modelo_<alg>_<etiqueta>.zip y p1_logs/monitor_<alg>_<etiqueta>,
+para no sobrescribir los de otra configuración del guía. Sin --etiqueta
+se usan los nombres de siempre.
 """
 
 import argparse
@@ -70,7 +75,8 @@ HIPER_PPO = dict(
     gamma=0.99,
     gae_lambda=0.95,
     clip_range=0.2,
-    ent_coef=0.0,
+    gradient_steps=2,
+    ent_coef='auto_0.1',
 )
 
 
@@ -91,6 +97,16 @@ def cargar_algoritmo(nombre, ruta, env):
 
     clase = SAC if nombre == 'sac' else PPO
     return clase.load(ruta, env=env)
+
+
+def nombre_con_etiqueta(prefijo, args):
+    """prefijo_<alg>, o prefijo_<alg>_<etiqueta> si se pasó --etiqueta.
+    Sirve para guardar modelo y monitor de cada configuración del guía
+    (c1, c2, c3...) sin sobrescribir los de las demás."""
+    nombre = prefijo + '_' + args.algoritmo
+    if args.etiqueta:
+        nombre += '_' + args.etiqueta
+    return nombre
 
 
 
@@ -123,8 +139,8 @@ def modo_entrenar(args):
         # longitud, tiempo) y además las causas de fin indicadas.
         env = Monitor(env,
                       filename=os.path.join(RUTA_LOGS,
-                                            'monitor_' + args.algoritmo),
-                      info_keywords=('choque', 'perdido'))
+                                            nombre_con_etiqueta('monitor', args)),
+                      info_keywords=('choque', 'perdido', 'atascado'))
 
         modelo = construir_algoritmo(args.algoritmo, env, args.semilla)
 
@@ -138,7 +154,7 @@ def modo_entrenar(args):
         except KeyboardInterrupt:
             print('\nEntrenamiento interrumpido por el usuario.')
 
-        ruta = RUTA_MODELO + '_' + args.algoritmo
+        ruta = nombre_con_etiqueta(RUTA_MODELO, args)
         modelo.save(ruta)
         dt = time.time() - t0
         print('\nModelo guardado en {}.zip'.format(ruta))
@@ -152,7 +168,7 @@ def modo_entrenar(args):
 def modo_evaluar(args):
     env = crear_env(args)
     try:
-        ruta = RUTA_MODELO + '_' + args.algoritmo
+        ruta = nombre_con_etiqueta(RUTA_MODELO, args)
         if not os.path.exists(ruta + '.zip'):
             raise SystemExit(
                 'No existe {}.zip. Hay que entrenar primero.'.format(ruta))
@@ -170,7 +186,7 @@ def resumen(env, politica, episodios, titulo):
     recompensas = []
     longitudes = []
     visibles = []
-    choques = perdidos = completos = 0
+    choques = perdidos = atascos = completos = 0
 
     print('\n' + titulo)
     print('-' * len(titulo))
@@ -197,6 +213,9 @@ def resumen(env, politica, episodios, titulo):
         if info.get('choque'):
             choques += 1
             desenlace = 'choque'
+        elif info.get('atascado'):
+            atascos += 1
+            desenlace = 'atasco (choque con el entorno)'
         elif info.get('perdido'):
             perdidos += 1
             desenlace = 'guía perdido'
@@ -215,6 +234,7 @@ def resumen(env, politica, episodios, titulo):
     print('sin fallo         {}/{}'.format(completos, episodios))
     print('guía perdido      {}/{}'.format(perdidos, episodios))
     print('choques           {}/{}'.format(choques, episodios))
+    print('atascos           {}/{}'.format(atascos, episodios))
 
 
 def crear_env(args):
@@ -250,6 +270,9 @@ def main():
                    help='no usar el módulo sim; reinicio a mano')
     p.add_argument('--detalle', action='store_true',
                    help='imprime una línea por paso')
+    p.add_argument('--etiqueta', default=None,
+                   help='sufijo del modelo y del monitor (c1, c2, c3...); '
+                        'sin él se usan los nombres de siempre')
 
     args = p.parse_args()
 

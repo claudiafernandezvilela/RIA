@@ -8,18 +8,29 @@
   "blob_size_min": 0.0,
 
   "s_max": 250.0,
-  "s_objetivo": 0.65,
-  "s_cerca": 0.85,
+  "s_objetivo": 0.40,
+  "s_cerca": 0.75,
   "s_choque": 0.97,
+  "s_lejos": 0.10,
+  "s_tolerancia": 0.15,
 
   "tilt_angulo": 90.0,
   "tilt_velocidad": 10.0,
 
   "v_min": -0.08,
-  "v_max": 0.10,
+  "v_max": 0.20,
   "w_max": 0.8,
 
   "paso_s": 0.2,
   "espera_max_s": 3.0,
-  "pasos_perdido_max": 10
-}
+  "pasos_perdido_max": 7,
+
+  "atasco_pasos": 5,
+  "atasco_mm": 20.0,
+  "atasco_v_min": 0.03,
+
+  "sim_ip": "host.docker.internal",
+  "pelota_objeto": "CYLINDERMIDBALL",
+  "sep_colision_m": 0.12,
+  "sep_perdido_m": 0.90
+  }
