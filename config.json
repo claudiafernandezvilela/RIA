@@ -30,7 +30,8 @@
   "atasco_v_min": 0.03,
 
   "sim_ip": "host.docker.internal",
-  "pelota_objeto": "CYLINDERMIDBALL",
+  "guia_objeto": "PATHFOLLOWROBOBO",
+  "pelota_offset_m": 0.08,
   "sep_colision_m": 0.12,
   "sep_perdido_m": 0.90
   }

@@ -222,9 +222,8 @@ class RoboboSeguirEnv(gym.Env):
             self._preparar_reset()
             self._suscribir_pose(c['ns_sim'] + '/robot_location', '_pose')
 
-        # Posición de la pelota (objeto del simulador; el guía tampoco es un
-        # robot, así que el módulo sim del puente no publica ninguna de las
-        # dos). Se lee con la biblioteca robobosim.
+        # Pose del guía (objeto del simulador, no un robot: el módulo sim
+        # del puente no la publica). Se lee con la biblioteca robobosim.
         self._sim_guia = None
         if usar_simulador:
             try:
@@ -232,10 +231,10 @@ class RoboboSeguirEnv(gym.Env):
                 self._sim_guia = RoboboSim(c['sim_ip'])
                 self._sim_guia.connect()
                 time.sleep(1.0)
-                if self._sim_guia.getObjectLocation(c['pelota_objeto']) is None:
+                if self._sim_guia.getObjectLocation(c['guia_objeto']) is None:
                     print('[aviso] No se encuentra el objeto {} en el '
                           'simulador; no se mide la separación real.'
-                          .format(c['pelota_objeto']))
+                          .format(c['guia_objeto']))
                     self._sim_guia.disconnect()
                     self._sim_guia = None
             except Exception as e:
@@ -422,20 +421,26 @@ class RoboboSeguirEnv(gym.Env):
 
     def _separacion(self):
         """Separación del anexo B.1, en metros: distancia entre el centro del
-        seguidor y la pelota verde. La posición de la pelota se lee
-        directamente del simulador (objeto pelota_objeto), en lugar de
-        calcularla desplazando la pose del guía: en la escena de RoboboSim
-        4.3.0 la pelota está a 0,118 m del centro del guía, no a 0,08 m.
-        None si no hay pose del seguidor o de la pelota."""
+        seguidor y la pelota verde, cuya posición es la pose del guía
+        desplazada pelota_offset_m hacia su parte trasera. None si no hay
+        pose del seguidor o del guía.
+
+        Rumbo: con rotación y = θ (grados), el robot mira hacia
+        (sin θ, cos θ) en el plano (x, z). Comprobado con la escena: con
+        θ = 0 el guía (z = -566) va por delante de la pelota (z = -684)."""
         if self._pose is None or self._sim_guia is None:
             return None
         try:
-            b = self._sim_guia.getObjectLocation(self.cfg['pelota_objeto'])
+            g = self._sim_guia.getObjectLocation(self.cfg['guia_objeto'])
         except Exception:
             return None
-        if not b:
+        if not g:
             return None
-        px, pz = b['position']['x'], b['position']['z']
+        gx, gz = g['position']['x'], g['position']['z']
+        th = np.radians(g['rotation']['y'])
+        off = self.cfg['pelota_offset_m'] * 1000.0
+        px = gx - off * np.sin(th)
+        pz = gz - off * np.cos(th)
         fx, fz = self._pose[0], self._pose[1]
         return float(np.hypot(px - fx, pz - fz) / 1000.0)
 
