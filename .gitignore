@@ -1,0 +1,27 @@
+# ── Python ──────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyc
+
+# ── Modelos entrenados (Stable-Baselines3) ──
+*.zip
+
+# ── Logs de entrenamiento ───────────────
+# Monitor de Gymnasium / SB3
+*.monitor.csv
+
+# TensorBoard
+events.out.tfevents.*
+runs/
+tensorboard/
+tb_logs/
+
+# ── Entornos virtuales ──────────────────
+venv/
+.venv/
+env/
+
+# ── Sistema / editor ────────────────────
+.DS_Store
+.vscode/
+.idea/
