@@ -8,16 +8,16 @@
   "blob_size_min": 0.0,
 
   "s_max": 250.0,
-  "s_objetivo": 0.40,
+  "s_objetivo": 0.50,
   "s_cerca": 0.75,
   "s_choque": 0.97,
   "s_lejos": 0.10,
-  "s_tolerancia": 0.15,
+  "s_tolerancia": 0.10,
 
   "tilt_angulo": 90.0,
   "tilt_velocidad": 10.0,
 
-  "v_min": -0.08,
+  "v_min": 0.01,
   "v_max": 0.20,
   "w_max": 0.8,
 
@@ -33,5 +33,11 @@
   "guia_objeto": "PATHFOLLOWROBOBO",
   "pelota_offset_m": 0.08,
   "sep_colision_m": 0.12,
-  "sep_perdido_m": 0.90
+  "sep_perdido_m": 0.90,
+
+  "eval_duracion_s": 120.0,
+  "eval_sin_ver_s": 3.0,
+  "banda_min_m": 0.20,
+  "banda_max_m": 0.45,
+  "desv_max_grados": 15.0
   }

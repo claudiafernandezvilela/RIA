@@ -419,30 +419,37 @@ class RoboboSeguirEnv(gym.Env):
         obs = [visible, x, s] + list(self.ultima_accion)
         return np.array(obs, dtype=np.float32)
 
-    def _separacion(self):
-        """Separación del anexo B.1, en metros: distancia entre el centro del
-        seguidor y la pelota verde, cuya posición es la pose del guía
-        desplazada pelota_offset_m hacia su parte trasera. None si no hay
-        pose del seguidor o del guía.
+    def _verdad(self):
+        """Medidas del anexo B.1 con la verdad del simulador:
+        (separación en m, desviación en grados, posición de la pelota en mm).
+        (None, None, None) si no hay pose del seguidor o del guía.
 
-        Rumbo: con rotación y = θ (grados), el robot mira hacia
+        Pelota: pose del guía desplazada pelota_offset_m hacia su parte
+        trasera. Rumbo: con rotación y = θ (grados), el robot mira hacia
         (sin θ, cos θ) en el plano (x, z). Comprobado con la escena: con
-        θ = 0 el guía (z = -566) va por delante de la pelota (z = -684)."""
+        θ = 0 el guía (z = -566) va por delante de la pelota (z = -684).
+
+        Desviación: ángulo con signo entre el rumbo del seguidor y la
+        dirección seguidor -> pelota, en (-180, 180]."""
         if self._pose is None or self._sim_guia is None:
-            return None
+            return None, None, None
         try:
             g = self._sim_guia.getObjectLocation(self.cfg['guia_objeto'])
         except Exception:
-            return None
+            return None, None, None
         if not g:
-            return None
+            return None, None, None
         gx, gz = g['position']['x'], g['position']['z']
         th = np.radians(g['rotation']['y'])
         off = self.cfg['pelota_offset_m'] * 1000.0
         px = gx - off * np.sin(th)
         pz = gz - off * np.cos(th)
-        fx, fz = self._pose[0], self._pose[1]
-        return float(np.hypot(px - fx, pz - fz) / 1000.0)
+        fx, fz, fth = self._pose
+        dx, dz = px - fx, pz - fz
+        sep = float(np.hypot(dx, dz) / 1000.0)
+        hx, hz = np.sin(np.radians(fth)), np.cos(np.radians(fth))
+        desv = float(np.degrees(np.arctan2(hx * dz - hz * dx, hx * dx + hz * dz)))
+        return sep, desv, (float(px), float(pz))
 
     def _detectar_atasco(self, v):
         """True si en los últimos atasco_pasos pasos se ha ordenado avanzar
@@ -563,7 +570,7 @@ class RoboboSeguirEnv(gym.Env):
 
         # Separación real (anexo B.1), con la pose del simulador. Sólo se
         # usa para decidir el fin del episodio y para registro (apartado 4).
-        sep = self._separacion()
+        sep, desv, pelota = self._verdad()
 
         if sep is not None:
             # Criterios del anexo B.3:
@@ -603,11 +610,18 @@ class RoboboSeguirEnv(gym.Env):
             'tamano': s,
             # Separación real seguidor-pelota en m (None sin simulador)
             'separacion': sep,
+            # Desviación rumbo-pelota en grados y posición de la pelota en
+            # mm (anexo B.1), sólo para registro
+            'desviacion': desv,
+            'pelota_sim': pelota,
             'choque': choque,
             'perdido': perdido,
             'atascado': atascado,
             # Pose real del seguidor (mm, grados), sólo para registro
             'pose_sim': self._pose,
+            # Velocidades realmente ordenadas (m/s, rad/s)
+            'v': float(v),
+            'w': float(w),
         }
 
         if self.verbose:
