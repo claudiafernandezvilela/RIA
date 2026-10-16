@@ -51,6 +51,7 @@ y ajustar blob_x_max, s_max, s_objetivo, s_cerca y s_choque.
 import json
 import os
 import time
+from collections import deque
 
 import numpy as np
 
@@ -152,7 +153,13 @@ class RoboboSeguirEnv(gym.Env):
     Recompensa — en _recompensa(), con los cuatro términos de espacios.txt.
 
     Fin de episodio (espacios.txt, "Reinicio aprendizaje")
-        terminated: colisión, o guía perdido durante demasiados pasos
+        terminated: con simulador, criterios del anexo B con la separación
+                    real (colisión < sep_colision_m; guía perdido si
+                    separación > sep_perdido_m o pelota sin ver durante
+                    pasos_perdido_max pasos); sin simulador, aproximación por
+                    el tamaño del blob. Además, atasco (choque con el
+                    entorno, detectado con la pose del simulador).
+                    (no visible, o visible pero más pequeño que s_lejos)
         truncated:  tiempo máximo del episodio (pasos_max)
     """
 
@@ -215,6 +222,26 @@ class RoboboSeguirEnv(gym.Env):
             self._preparar_reset()
             self._suscribir_pose(c['ns_sim'] + '/robot_location', '_pose')
 
+        # Pose del guía (objeto del simulador, no un robot: el módulo sim
+        # del puente no la publica). Se lee con la biblioteca robobosim.
+        self._sim_guia = None
+        if usar_simulador:
+            try:
+                from robobosim.RoboboSim import RoboboSim
+                self._sim_guia = RoboboSim(c['sim_ip'])
+                self._sim_guia.connect()
+                time.sleep(1.0)
+                if self._sim_guia.getObjectLocation(c['guia_objeto']) is None:
+                    print('[aviso] No se encuentra el objeto {} en el '
+                          'simulador; no se mide la separación real.'
+                          .format(c['guia_objeto']))
+                    self._sim_guia.disconnect()
+                    self._sim_guia = None
+            except Exception as e:
+                print('[aviso] No se puede leer la pose del guía ({}); no se '
+                      'mide la separación real.'.format(e))
+                self._sim_guia = None
+
         # -------------------------------------------------- espacios
         #          visible    x     tamaño   v     w
         low = [0.0, -1.0, 0.0, -1.0, -1.0]
@@ -231,6 +258,8 @@ class RoboboSeguirEnv(gym.Env):
         self.pasos_perdido = 0
         self.ultima_accion = np.zeros(2, dtype=np.float32)
         self._ultima_x = 0.0
+        # Poses recientes del seguidor (sólo para detectar atascos)
+        self._poses_recientes = deque(maxlen=c['atasco_pasos'] + 1)
 
         self._esperar_lectura_nueva(inicial=True)
 
@@ -390,30 +419,90 @@ class RoboboSeguirEnv(gym.Env):
         obs = [visible, x, s] + list(self.ultima_accion)
         return np.array(obs, dtype=np.float32)
 
+    def _verdad(self):
+        """Medidas del anexo B.1 con la verdad del simulador:
+        (separación en m, desviación en grados, posición de la pelota en mm).
+        (None, None, None) si no hay pose del seguidor o del guía.
+
+        Pelota: pose del guía desplazada pelota_offset_m hacia su parte
+        trasera. Rumbo: con rotación y = θ (grados), el robot mira hacia
+        (sin θ, cos θ) en el plano (x, z). Comprobado con la escena: con
+        θ = 0 el guía (z = -566) va por delante de la pelota (z = -684).
+
+        Desviación: ángulo con signo entre el rumbo del seguidor y la
+        dirección seguidor -> pelota, en (-180, 180]."""
+        if self._pose is None or self._sim_guia is None:
+            return None, None, None
+        try:
+            g = self._sim_guia.getObjectLocation(self.cfg['guia_objeto'])
+        except Exception:
+            return None, None, None
+        if not g:
+            return None, None, None
+        gx, gz = g['position']['x'], g['position']['z']
+        th = np.radians(g['rotation']['y'])
+        off = self.cfg['pelota_offset_m'] * 1000.0
+        px = gx - off * np.sin(th)
+        pz = gz - off * np.cos(th)
+        fx, fz, fth = self._pose
+        dx, dz = px - fx, pz - fz
+        sep = float(np.hypot(dx, dz) / 1000.0)
+        hx, hz = np.sin(np.radians(fth)), np.cos(np.radians(fth))
+        desv = float(np.degrees(np.arctan2(hx * dz - hz * dx, hx * dx + hz * dz)))
+        return sep, desv, (float(px), float(pz))
+
+    def _detectar_atasco(self, v):
+        """True si en los últimos atasco_pasos pasos se ha ordenado avanzar
+        (v >= atasco_v_min en todos) y el seguidor se ha desplazado menos de
+        atasco_mm. Se compara con la pose de hace atasco_pasos pasos, no con
+        la del paso anterior, para no confundir un atasco con que
+        robot_location aún no se haya actualizado."""
+        c = self.cfg
+        if self._pose is None:          # sin módulo sim: no se detecta
+            return False
+        if v < c['atasco_v_min']:
+            # Parado o marcha atrás a propósito: no cuenta como atasco
+            self._poses_recientes.clear()
+            return False
+        self._poses_recientes.append((self._pose[0], self._pose[1]))
+        if len(self._poses_recientes) < self._poses_recientes.maxlen:
+            return False
+        (x0, z0), (x1, z1) = self._poses_recientes[0], self._poses_recientes[-1]
+        return bool(np.hypot(x1 - x0, z1 - z0) < c['atasco_mm'])
 
 
-    def _recompensa(self, visible, x, s, choque, perdido):
-        """Los cuatro términos de espacios.txt. Coeficientes iniciales,
-        a ajustar experimentalmente (y a declarar en la memoria).
 
-          1. Distancia:   1 - |s - S_obj| / S_obj, en [0, 1] (sólo visible)
+    def _recompensa(self, visible, x, s, choque, perdido, cambio_accion):
+        """Los cuatro términos de espacios.txt más uno de suavidad.
+        Coeficientes iniciales, a ajustar experimentalmente (y a declarar
+        en la memoria).
+
+          1. Distancia:   1 - |s - S_obj| / S_tol, recortado a [-1, 1]
+                          (sólo visible). Vale 1 en el objetivo, 0 a una
+                          tolerancia de distancia y -1 a dos o más: ir
+                          demasiado lejos o demasiado cerca resta.
           2. Centrado:    1 - |x|, en [0, 1] (sólo visible)
           3. Visibilidad: -K_PERDIDO por cada paso sin ver al guía y
                           R_PERDIDO al terminar por pérdida prolongada
           4. Seguridad:   penalización creciente si s > S_cerca y
                           R_CHOQUE al terminar por colisión
+          5. Suavidad:    -K_SUAVE * (|Δv| + |Δw|) de la acción normalizada
+                          respecto al paso anterior, para que regule la
+                          velocidad de forma progresiva y no a tirones.
         """
         c = self.cfg
         K_DIST = 1.0
-        K_CENTRO = 0.5
+        K_CENTRO = 0.3
         K_PERDIDO = 1.0
         K_CERCA = 2.0
+        K_SUAVE = 0.1
         R_CHOQUE = -10.0
         R_PERDIDO = -10.0
 
         r = 0.0
         if visible:
-            r_dist = 1.0 - min(abs(s - c['s_objetivo']) / c['s_objetivo'], 1.0)
+            err = abs(s - c['s_objetivo']) / c['s_tolerancia']
+            r_dist = 1.0 - min(err, 2.0)
             r_centro = 1.0 - abs(x)
             r += K_DIST * r_dist + K_CENTRO * r_centro
 
@@ -422,6 +511,8 @@ class RoboboSeguirEnv(gym.Env):
                 r -= K_CERCA * min(exceso, 1.0)
         else:
             r -= K_PERDIDO
+
+        r -= K_SUAVE * cambio_accion
 
         if choque:
             r += R_CHOQUE
@@ -444,6 +535,7 @@ class RoboboSeguirEnv(gym.Env):
         self.pasos_perdido = 0
         self.ultima_accion = np.zeros(2, dtype=np.float32)
         self._ultima_x = 0.0
+        self._poses_recientes.clear()
 
         # Descartar lo acumulado durante el reinicio y esperar una lectura
         # tomada ya en la posición nueva.
@@ -456,6 +548,8 @@ class RoboboSeguirEnv(gym.Env):
     def step(self, accion):
         c = self.cfg
         accion = np.clip(np.asarray(accion, dtype=np.float32), -1.0, 1.0)
+        # Cambio respecto a la acción anterior (término de suavidad)
+        cambio_accion = float(np.sum(np.abs(accion - self.ultima_accion)))
         self.ultima_accion = accion
 
         # 1. Reescalar y publicar
@@ -474,15 +568,38 @@ class RoboboSeguirEnv(gym.Env):
         self.pasos += 1
         visible, x, s = self._medidas_blob()
 
-        self.pasos_perdido = 0 if visible else self.pasos_perdido + 1
-        perdido = self.pasos_perdido >= c['pasos_perdido_max']
+        # Separación real (anexo B.1), con la pose del simulador. Sólo se
+        # usa para decidir el fin del episodio y para registro (apartado 4).
+        sep, desv, pelota = self._verdad()
 
-        # Colisión aproximada por el tamaño del blob (guía demasiado cerca)
-        choque = bool(visible and s >= c['s_choque'])
+        if sep is not None:
+            # Criterios del anexo B.3:
+            #   colisión:     separación < sep_colision_m (0,12 m)
+            #   guía perdido: separación > sep_perdido_m (0,90 m), o la
+            #                 pelota sin detectarse durante pasos_perdido_max
+            #                 pasos seguidos (3 s en el protocolo)
+            self.pasos_perdido = 0 if visible else self.pasos_perdido + 1
+            perdido = bool(sep > c['sep_perdido_m'] or
+                           self.pasos_perdido >= c['pasos_perdido_max'])
+            choque = bool(sep < c['sep_colision_m'])
+        else:
+            # Sin simulador: aproximación por el tamaño del blob.
+            # Pelota visible pero más pequeña que s_lejos cuenta igual que
+            # no verla para declarar el guía perdido.
+            lejos = bool(visible and s < c['s_lejos'])
+            self.pasos_perdido = (0 if (visible and not lejos)
+                                  else self.pasos_perdido + 1)
+            perdido = self.pasos_perdido >= c['pasos_perdido_max']
+            choque = bool(visible and s >= c['s_choque'])
 
-        r = self._recompensa(visible, x, s, choque, perdido)
+        # Atasco: choque con el entorno (señales, bordillos...). Se usa la
+        # pose del simulador, que el apartado 4 permite para decidir el fin
+        # del episodio (no entra en la observación ni en la recompensa).
+        atascado = self._detectar_atasco(v)
 
-        terminated = bool(choque or perdido)
+        r = self._recompensa(visible, x, s, choque, perdido, cambio_accion)
+
+        terminated = bool(choque or perdido or atascado)
         truncated = bool(self.pasos >= self.pasos_max)
         if terminated or truncated:
             self._detener()
@@ -491,17 +608,30 @@ class RoboboSeguirEnv(gym.Env):
             'visible': bool(visible),
             'x': x,
             'tamano': s,
+            # Separación real seguidor-pelota en m (None sin simulador)
+            'separacion': sep,
+            # Desviación rumbo-pelota en grados y posición de la pelota en
+            # mm (anexo B.1), sólo para registro
+            'desviacion': desv,
+            'pelota_sim': pelota,
             'choque': choque,
             'perdido': perdido,
+            'atascado': atascado,
             # Pose real del seguidor (mm, grados), sólo para registro
             'pose_sim': self._pose,
+            # Velocidades realmente ordenadas (m/s, rad/s)
+            'v': float(v),
+            'w': float(w),
         }
 
         if self.verbose:
-            print('paso {:3d}  vis={:d} x={:+.2f} s={:.2f}  v={:+.3f} '
+            print('paso {:3d}  vis={:d} x={:+.2f} s={:.2f}  sep={}  v={:+.3f} '
                   'w={:+.3f}  r={:+.3f}{}'.format(
-                      self.pasos, int(visible), x, s, v, w, r,
+                      self.pasos, int(visible), x, s,
+                      '{:.3f}'.format(sep) if sep is not None else '  -  ',
+                      v, w, r,
                       '  CHOQUE' if choque else
+                      '  ATASCO' if atascado else
                       ('  PERDIDO' if perdido else '')))
 
         return self._observacion(visible, x, s), r, terminated, truncated, info
@@ -511,11 +641,12 @@ class RoboboSeguirEnv(gym.Env):
             self._detener()
         except Exception:
             pass
-        if self._sim_lib is not None:
-            try:
-                self._sim_lib.disconnect()
-            except Exception:
-                pass
+        for lib in (self._sim_lib, self._sim_guia):
+            if lib is not None:
+                try:
+                    lib.disconnect()
+                except Exception:
+                    pass
         try:
             self.nodo.destroy_node()
         except Exception:
@@ -532,12 +663,32 @@ def calibrar():
         empiece a cortarse por el borde inferior de la imagen.
       - s_objetivo: tamaño normalizado a la separación deseada.
       - s_cerca / s_choque: tamaños demasiado cerca / casi tocando.
+      - s_lejos: tamaño normalizado con la pelota a 0,90 m.
     Ctrl-C para salir.
     """
     cfg = cargar_config()
     if not rclpy.ok():
         rclpy.init()
     nodo = Node('p1_calibracion')
+
+    # Misma inclinación de cámara que usa el entorno tras cada reinicio;
+    # si no, se calibra con otro tilt y los tamaños no corresponden.
+    if cfg.get('tilt_angulo') is not None:
+        nombre = cfg['ns_base'] + '/move_tilt'
+        tipo_t = _esperar_tipo(nodo, nombre, servicio=True, espera_s=3.0)
+        if tipo_t is None:
+            print('[aviso] No aparece {}; no se fija el tilt.'.format(nombre))
+        else:
+            srv = get_service(tipo_t)
+            cli = nodo.create_client(srv, nombre)
+            if cli.wait_for_service(timeout_sec=3.0):
+                req = srv.Request()
+                req.angle = float(cfg['tilt_angulo'])
+                req.speed = float(cfg['tilt_velocidad'])
+                fut = cli.call_async(req)
+                rclpy.spin_until_future_complete(nodo, fut, timeout_sec=10.0)
+                print('Tilt fijado a {}'.format(cfg['tilt_angulo']))
+
     topico = cfg['ns_smartphone'] + '/color_blobs'
     tipo = _esperar_tipo(nodo, topico)
     if tipo is None:
