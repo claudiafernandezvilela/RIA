@@ -40,7 +40,11 @@ USO
       python3 evaluar.py --config c1 --aleatorio          # línea base
 
   --etiqueta elige el modelo p1_modelo_<alg>_<etiqueta>.zip (como en
-  train.py); --modelo permite dar la ruta directamente.
+  train.py); --modelo permite dar la ruta directamente. Se evalúa con la
+  configuración guardada junto al modelo (p1_modelo_<...>.json); para la
+  aleatoria, o un modelo sin esa copia, con --config-json:
+
+      python3 evaluar.py --config c1 --aleatorio --config-json config_c1.json
 
   Cuando estén todas las ejecuciones, las tablas de métricas:
 
@@ -149,8 +153,34 @@ def ejecutar_episodio(env, politica, cfg, ruta_csv):
 
 def modo_ejecutar(args):
     from env import RoboboSeguirEnv, cargar_config
+    from train import cargar_algoritmo, config_de_modelo
 
-    cfg = cargar_config()
+    # Configuración: la guardada junto al modelo (la de su entrenamiento),
+    # porque la escala de la acción (v_min, v_max, w_max) tiene que ser
+    # la misma. Para la política aleatoria, o un modelo antiguo sin copia,
+    # config.json con --config-json encima.
+    ruta = None
+    if not args.aleatorio:
+        ruta = args.modelo or 'p1_modelo_{}{}'.format(
+            args.algoritmo, '_' + args.etiqueta if args.etiqueta else '')
+        ruta = ruta[:-4] if ruta.endswith('.zip') else ruta
+        if not os.path.exists(ruta + '.zip'):
+            raise SystemExit('No existe {}.zip'.format(ruta))
+    if ruta and os.path.exists(config_de_modelo(ruta)):
+        # Los umbrales del protocolo se toman siempre de config.json
+        cfg = dict(cargar_config(config_de_modelo(ruta)),
+                   **{k: v for k, v in cargar_config().items()
+                      if k.startswith(('eval_', 'banda_', 'desv_'))})
+        print('Configuración del modelo: {}'.format(config_de_modelo(ruta)))
+    else:
+        cfg = cargar_config(extra=args.config_json)
+        if ruta:
+            print('[aviso] {} no tiene copia de su configuración; se usa '
+                  'config.json{}. Comprobar que v_min, v_max y w_max son '
+                  'los del entrenamiento.'.format(
+                      ruta, ' + ' + args.config_json if args.config_json
+                      else ''))
+
     # El fin por pelota no vista lo decide el evaluador con el reloj
     # (3 s, anexo B.3), no el entorno en pasos: se desactiva el de éste.
     # Tampoco debe truncar por pasos antes de los 120 s.
@@ -163,12 +193,6 @@ def modo_ejecutar(args):
             nombre = 'aleatoria'
             politica = lambda obs: env.action_space.sample()
         else:
-            from train import cargar_algoritmo
-            ruta = args.modelo or 'p1_modelo_{}{}'.format(
-                args.algoritmo, '_' + args.etiqueta if args.etiqueta else '')
-            ruta = ruta[:-4] if ruta.endswith('.zip') else ruta
-            if not os.path.exists(ruta + '.zip'):
-                raise SystemExit('No existe {}.zip'.format(ruta))
             modelo = cargar_algoritmo(args.algoritmo, ruta, env)
             nombre = os.path.basename(ruta)
             # Política determinista (anexo B.2)
@@ -317,6 +341,9 @@ def main():
                    help='modelo p1_modelo_<alg>_<etiqueta>.zip')
     p.add_argument('--modelo', default=None,
                    help='ruta del modelo (sustituye a --etiqueta)')
+    p.add_argument('--config-json', default=None,
+                   help='valores de la configuración (p. ej. config_c1.json); '
+                        'sólo si el modelo no tiene su copia .json')
     p.add_argument('--episodios', type=int, default=1,
                    help='ejecuciones de 120 s en esta configuración')
     p.add_argument('--detalle', action='store_true',

@@ -70,9 +70,16 @@ RUTA_CONFIG = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            'config.json')
 
 
-def cargar_config(ruta=RUTA_CONFIG):
+def cargar_config(ruta=RUTA_CONFIG, extra=None):
+    """Lee config.json y, si se da extra (p. ej. config_c1.json), aplica
+    encima sus valores: cada configuración del guía sólo declara lo que
+    cambia. Las claves que empiezan por '_' son comentarios."""
     with open(ruta) as f:
-        return json.load(f)
+        cfg = json.load(f)
+    if extra:
+        with open(extra) as f:
+            cfg.update(json.load(f))
+    return {k: v for k, v in cfg.items() if not k.startswith('_')}
 
 
 def _esperar_tipo(nodo, nombre, servicio=False, espera_s=5.0):
@@ -477,10 +484,11 @@ class RoboboSeguirEnv(gym.Env):
         Coeficientes iniciales, a ajustar experimentalmente (y a declarar
         en la memoria).
 
-          1. Distancia:   1 - |s - S_obj| / S_tol, recortado a [-1, 1]
-                          (sólo visible). Vale 1 en el objetivo, 0 a una
-                          tolerancia de distancia y -1 a dos o más: ir
-                          demasiado lejos o demasiado cerca resta.
+          1. Distancia:   1 - |s - S_obj| / S_tol, recortado a [0, 1]
+                          (sólo visible). Vale 1 en el objetivo y 0 a una
+                          tolerancia o más. No es negativo: con valores
+                          negativos el agente aprendía a perder al guía
+                          a propósito para acabar antes el episodio.
           2. Centrado:    1 - |x|, en [0, 1] (sólo visible)
           3. Visibilidad: -K_PERDIDO por cada paso sin ver al guía y
                           R_PERDIDO al terminar por pérdida prolongada
@@ -502,7 +510,7 @@ class RoboboSeguirEnv(gym.Env):
         r = 0.0
         if visible:
             err = abs(s - c['s_objetivo']) / c['s_tolerancia']
-            r_dist = 1.0 - min(err, 2.0)
+            r_dist = 1.0 - min(err, 1.0)
             r_centro = 1.0 - abs(x)
             r += K_DIST * r_dist + K_CENTRO * r_centro
 

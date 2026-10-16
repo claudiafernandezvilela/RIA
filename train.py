@@ -37,6 +37,11 @@ Los episodios se registran en p1_logs/monitor_<alg>.monitor.csv (una
 fila por episodio), para hacer después las curvas de aprendizaje con
 Matplotlib (apartado 9.1).
 
+Con --config-json config_c1.json se aplican sobre config.json los
+valores propios de esa configuración del guía. Al guardar el modelo se
+guarda también p1_modelo_<...>.json con la configuración completa usada,
+que es la que se carga después al evaluarlo.
+
 Con --etiqueta (p. ej. --etiqueta c3) el modelo y el monitor se guardan
 como p1_modelo_<alg>_<etiqueta>.zip y p1_logs/monitor_<alg>_<etiqueta>,
 para no sobrescribir los de otra configuración del guía. Sin --etiqueta
@@ -44,12 +49,13 @@ se usan los nombres de siempre.
 """
 
 import argparse
+import json
 import os
 import time
 
 import numpy as np
 
-from env import RoboboSeguirEnv, calibrar
+from env import RoboboSeguirEnv, calibrar, cargar_config
 
 
 RUTA_MODELO = 'p1_modelo'
@@ -92,6 +98,16 @@ def construir_algoritmo(nombre, env, semilla=None):
     raise ValueError('Algoritmo desconocido: ' + nombre)
 
 
+def config_de_modelo(ruta):
+    """Ruta de la copia de la configuración guardada junto a un modelo."""
+    return ruta + '.json'
+
+
+def guardar_config(ruta, cfg):
+    with open(config_de_modelo(ruta), 'w') as f:
+        json.dump(cfg, f, indent=2, ensure_ascii=False)
+
+
 def cargar_algoritmo(nombre, ruta, env):
     from stable_baselines3 import PPO, SAC
 
@@ -131,7 +147,11 @@ def modo_aleatorio(args):
 
 
 def modo_entrenar(args):
-    env = crear_env(args)
+    # Se lee una sola vez: la copia que se guarda con el modelo es la
+    # configuración con la que realmente se ha entrenado, aunque los JSON
+    # se editen mientras tanto.
+    cfg = crear_config(args)
+    env = crear_env(args, cfg)
     try:
         from stable_baselines3.common.monitor import Monitor
         os.makedirs(RUTA_LOGS, exist_ok=True)
@@ -156,6 +176,10 @@ def modo_entrenar(args):
 
         ruta = nombre_con_etiqueta(RUTA_MODELO, args)
         modelo.save(ruta)
+        # Copia de la configuración con la que se ha entrenado: al evaluar
+        # se usa ésta y no la de config.json, que puede haber cambiado.
+        guardar_config(ruta, cfg)
+        print('Configuración guardada en {}'.format(config_de_modelo(ruta)))
         dt = time.time() - t0
         print('\nModelo guardado en {}.zip'.format(ruta))
         print('Tiempo empleado: {:.1f} min'.format(dt / 60.0))
@@ -166,12 +190,16 @@ def modo_entrenar(args):
 
 
 def modo_evaluar(args):
-    env = crear_env(args)
+    ruta = nombre_con_etiqueta(RUTA_MODELO, args)
+    if not os.path.exists(ruta + '.zip'):
+        raise SystemExit(
+            'No existe {}.zip. Hay que entrenar primero.'.format(ruta))
+    cfg = None
+    if os.path.exists(config_de_modelo(ruta)):
+        cfg = cargar_config(config_de_modelo(ruta))
+        print('Configuración del modelo: {}'.format(config_de_modelo(ruta)))
+    env = crear_env(args, cfg)
     try:
-        ruta = nombre_con_etiqueta(RUTA_MODELO, args)
-        if not os.path.exists(ruta + '.zip'):
-            raise SystemExit(
-                'No existe {}.zip. Hay que entrenar primero.'.format(ruta))
 
         modelo = cargar_algoritmo(args.algoritmo, ruta, env)
         resumen(env,
@@ -237,11 +265,17 @@ def resumen(env, politica, episodios, titulo):
     print('atascos           {}/{}'.format(atascos, episodios))
 
 
-def crear_env(args):
+def crear_config(args):
+    """config.json con los valores de --config-json aplicados encima."""
+    return cargar_config(extra=args.config_json)
+
+
+def crear_env(args, cfg=None):
     return RoboboSeguirEnv(
         pasos_max=args.pasos_max,
         usar_simulador=not args.sin_simulador,
-        verbose=args.detalle)
+        verbose=args.detalle,
+        config=cfg if cfg is not None else crear_config(args))
 
 
 def main():
@@ -273,6 +307,10 @@ def main():
     p.add_argument('--etiqueta', default=None,
                    help='sufijo del modelo y del monitor (c1, c2, c3...); '
                         'sin él se usan los nombres de siempre')
+
+    p.add_argument('--config-json', default=None,
+                   help='valores propios de una configuración del guía '
+                        '(p. ej. config_c1.json), aplicados sobre config.json')
 
     args = p.parse_args()
 
