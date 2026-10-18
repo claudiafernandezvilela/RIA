@@ -42,6 +42,9 @@ valores propios de esa configuración del guía. Al guardar el modelo se
 guarda también p1_modelo_<...>.json con la configuración completa usada,
 que es la que se carga después al evaluarlo.
 
+Los modelos se guardan en modelos/<configuración>/ según el principio de
+la etiqueta (c1_s1 -> modelos/c1/p1_modelo_sac_c1_s1.zip).
+
 Con --etiqueta (p. ej. --etiqueta c3) el modelo y el monitor se guardan
 como p1_modelo_<alg>_<etiqueta>.zip y p1_logs/monitor_<alg>_<etiqueta>,
 para no sobrescribir los de otra configuración del guía. Sin --etiqueta
@@ -51,6 +54,7 @@ se usan los nombres de siempre.
 import argparse
 import json
 import os
+import re
 import time
 
 import numpy as np
@@ -115,6 +119,24 @@ def cargar_algoritmo(nombre, ruta, env):
     return clase.load(ruta, env=env)
 
 
+RUTA_MODELOS = 'modelos'
+
+
+def ruta_modelo(algoritmo, etiqueta):
+    """Ruta (sin .zip) del modelo de una etiqueta. Los modelos se guardan
+    en modelos/<configuración>/, con la configuración tomada del principio
+    de la etiqueta (c1_s1 -> modelos/c1/). Si la etiqueta no empieza por
+    c<número>, en modelos/. Si el modelo sólo existe en la carpeta
+    principal (modelos antiguos), se devuelve esa ruta."""
+    nombre = RUTA_MODELO + '_' + algoritmo + ('_' + etiqueta if etiqueta else '')
+    m = re.match(r'(c\d+)', etiqueta or '')
+    carpeta = os.path.join(RUTA_MODELOS, m.group(1)) if m else RUTA_MODELOS
+    ruta = os.path.join(carpeta, nombre)
+    if not os.path.exists(ruta + '.zip') and os.path.exists(nombre + '.zip'):
+        return nombre
+    return ruta
+
+
 def nombre_con_etiqueta(prefijo, args):
     """prefijo_<alg>, o prefijo_<alg>_<etiqueta> si se pasó --etiqueta.
     Sirve para guardar modelo y monitor de cada configuración del guía
@@ -174,7 +196,8 @@ def modo_entrenar(args):
         except KeyboardInterrupt:
             print('\nEntrenamiento interrumpido por el usuario.')
 
-        ruta = nombre_con_etiqueta(RUTA_MODELO, args)
+        ruta = ruta_modelo(args.algoritmo, args.etiqueta)
+        os.makedirs(os.path.dirname(ruta) or '.', exist_ok=True)
         modelo.save(ruta)
         # Copia de la configuración con la que se ha entrenado: al evaluar
         # se usa ésta y no la de config.json, que puede haber cambiado.
@@ -190,7 +213,7 @@ def modo_entrenar(args):
 
 
 def modo_evaluar(args):
-    ruta = nombre_con_etiqueta(RUTA_MODELO, args)
+    ruta = ruta_modelo(args.algoritmo, args.etiqueta)
     if not os.path.exists(ruta + '.zip'):
         raise SystemExit(
             'No existe {}.zip. Hay que entrenar primero.'.format(ruta))

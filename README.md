@@ -12,8 +12,9 @@ vehículo guía de "Follow City" en RoboboSim.
 | `evaluar.py` | Evaluador con el protocolo del anexo B y tablas de métricas (`--metricas`) |
 | `config.json` | Configuración base. **Es la de C1** |
 | `config_c3.json` | Valores propios de **C3**, aplicados encima de `config.json` |
-| `p1_modelo_<alg>_<etiqueta>.zip` | Modelo entrenado |
-| `p1_modelo_<alg>_<etiqueta>.json` | Copia de la configuración completa con la que se entrenó ese modelo; `evaluar.py` la usa |
+| `modelos/c1/`, `modelos/c3/` | Modelos de cada configuración. La carpeta sale del principio de la etiqueta (`c1_s1` → `modelos/c1/`) |
+| `modelos/<c>/p1_modelo_<alg>_<etiqueta>.zip` | Modelo entrenado |
+| `modelos/<c>/p1_modelo_<alg>_<etiqueta>.json` | Copia de la configuración completa con la que se entrenó ese modelo; `evaluar.py` la usa |
 | `p1_logs/monitor_<alg>_<etiqueta>.monitor.csv` | Registro por episodio del entrenamiento (curvas de aprendizaje) |
 | `p1_eval/episodios.csv` | Una fila por episodio evaluado (desenlace) |
 | `p1_eval/<modelo>_<config>_ep<n>.csv` | Registro por paso de cada episodio evaluado |
@@ -61,7 +62,8 @@ python3 evaluar.py --config c3 --algoritmo sac --etiqueta c3_tilt100_s1
 
 ### Experimentos intermedios de C3
 
-La configuración exacta de cada uno está en su `p1_modelo_sac_<etiqueta>.json`.
+La configuración exacta de cada uno está en su `modelos/c3/p1_modelo_sac_<etiqueta>.json`
+(los `.zip` de estos modelos intermedios no se versionan por tamaño).
 
 | Etiqueta | Cambio respecto al anterior | Resultado en evaluación |
 |---|---|---|

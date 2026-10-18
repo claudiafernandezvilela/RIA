@@ -39,8 +39,8 @@ USO
       python3 evaluar.py --config c1 --algoritmo sac --etiqueta c1
       python3 evaluar.py --config c1 --aleatorio          # línea base
 
-  --etiqueta elige el modelo p1_modelo_<alg>_<etiqueta>.zip (como en
-  train.py); --modelo permite dar la ruta directamente. Se evalúa con la
+  --etiqueta elige el modelo modelos/<config>/p1_modelo_<alg>_<etiqueta>.zip
+  (como en train.py); --modelo permite dar la ruta directamente. Se evalúa con la
   configuración guardada junto al modelo (p1_modelo_<...>.json); para la
   aleatoria, o un modelo sin esa copia, con --config-json:
 
@@ -153,7 +153,7 @@ def ejecutar_episodio(env, politica, cfg, ruta_csv):
 
 def modo_ejecutar(args):
     from env import RoboboSeguirEnv, cargar_config
-    from train import cargar_algoritmo, config_de_modelo
+    from train import cargar_algoritmo, config_de_modelo, ruta_modelo
 
     # Configuración: la guardada junto al modelo (la de su entrenamiento),
     # porque la escala de la acción (v_min, v_max, w_max) tiene que ser
@@ -161,8 +161,7 @@ def modo_ejecutar(args):
     # config.json con --config-json encima.
     ruta = None
     if not args.aleatorio:
-        ruta = args.modelo or 'p1_modelo_{}{}'.format(
-            args.algoritmo, '_' + args.etiqueta if args.etiqueta else '')
+        ruta = args.modelo or ruta_modelo(args.algoritmo, args.etiqueta)
         ruta = ruta[:-4] if ruta.endswith('.zip') else ruta
         if not os.path.exists(ruta + '.zip'):
             raise SystemExit('No existe {}.zip'.format(ruta))
