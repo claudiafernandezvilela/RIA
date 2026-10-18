@@ -4,11 +4,12 @@ __pycache__/
 *.pyc
 
 # ── Modelos entrenados (Stable-Baselines3) ──
+# Se ignoran por tamaño; los finales se añaden con git add -f.
 *.zip
 
 # ── Logs de entrenamiento ───────────────
-# Monitor de Gymnasium / SB3
-*.monitor.csv
+# Los monitores (p1_logs/*.monitor.csv) SÍ se versionan: son las
+# evidencias de las curvas de aprendizaje (apartado 8.2).
 
 # TensorBoard
 events.out.tfevents.*

@@ -1,0 +1,11 @@
+{
+  "_comentario": "C3 (variable 10-40). Sólo los valores que cambian respecto a config.json. Historia: con el término de distancia en tamaño del blob el seguidor se quedaba lejos (c3_s1 7,9 % en banda; s_tolerancia 0,30 -> 17,1 %; + obs_delta -> 22,7 %). El registro de c3_delta_s1 muestra que el tamaño no es monótono con la distancia (máximo ~0,37 m, la pelota se corta más cerca), así que s_objetivo = 0,50 era ~0,47 m en C3 y ~0,29 m en C1. Aquí la distancia se premia con la separación real, centrada en 0,30 m (centro aproximado de la banda 0,20-0,45 m). obs_delta: variación del tamaño en la observación para saber si el guía frena o acelera. c3_sep_s1 (objetivo 0,30 m): 59 % en banda pero perdía al guía: por debajo de ~0,25 m la pelota sale de la imagen (tilt 90). Objetivo 0,35 m (máximo de tamaño, pelota entera) con tolerancia asimétrica: la recompensa de distancia es 0 a 0,27 m y a 0,47 m. Tilt 100 (cámara más baja): en la prueba con tilt 100 el tamaño sigue creciendo hasta ~0,30 m (con tilt 90 tenía el máximo hacia 0,37 m y luego bajaba), es decir, la pelota se corta más cerca. s_max sube de 250 a 450 porque con tilt 100 el tamaño normalizado se saturaba en 1 por debajo de ~0,35 m.",
+  "dist_por_separacion": true,
+  "sep_objetivo_m": 0.35,
+  "sep_tolerancia_cerca_m": 0.08,
+  "sep_tolerancia_lejos_m": 0.12,
+  "obs_delta": true,
+  "delta_s_max": 0.1,
+  "tilt_angulo": 100.0,
+  "s_max": 450.0
+}

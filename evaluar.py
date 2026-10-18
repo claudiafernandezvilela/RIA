@@ -71,7 +71,7 @@ DESENLACES = ('completado', 'colisión', 'guía perdido', 'otra causa')
 
 CAMPOS_PASO = ['t', 'paso', 'seguidor_x_mm', 'seguidor_z_mm',
                'seguidor_rot_grados', 'pelota_x_mm', 'pelota_z_mm',
-               'separacion_m', 'desviacion_grados', 'visible', 'blob_x',
+               'separacion_m', 'desviacion_grados', 'visible', 'blob_x', 'tamano',
                'accion_0', 'accion_1', 'v_ms', 'w_rads']
 CAMPOS_EPISODIO = ['politica', 'config', 'episodio', 'desenlace', 'detalle',
                    'duracion_s', 'pasos', 'fecha']
@@ -118,7 +118,7 @@ def ejecutar_episodio(env, politica, cfg, ruta_csv):
 
             esc.writerow([_f(v) for v in (
                 t, pasos, pose[0], pose[1], pose[2], pelota[0], pelota[1],
-                sep, info.get('desviacion'), visible, info.get('x'),
+                sep, info.get('desviacion'), visible, info.get('x'), info.get('tamano'),
                 float(accion[0]), float(accion[1]),
                 info.get('v'), info.get('w'))])
 
@@ -167,11 +167,17 @@ def modo_ejecutar(args):
         if not os.path.exists(ruta + '.zip'):
             raise SystemExit('No existe {}.zip'.format(ruta))
     if ruta and os.path.exists(config_de_modelo(ruta)):
-        # Los umbrales del protocolo se toman siempre de config.json
-        cfg = dict(cargar_config(config_de_modelo(ruta)),
+        # Los umbrales del protocolo se toman siempre de config.json.
+        # --config-json se aplica encima de la copia del modelo: sirve para
+        # probar un cambio que no afecta a la red (p. ej. el tilt) o para
+        # la calibración del robot real.
+        cfg = dict(cargar_config(config_de_modelo(ruta),
+                                 extra=args.config_json),
                    **{k: v for k, v in cargar_config().items()
                       if k.startswith(('eval_', 'banda_', 'desv_'))})
-        print('Configuración del modelo: {}'.format(config_de_modelo(ruta)))
+        print('Configuración del modelo: {}{}'.format(
+            config_de_modelo(ruta),
+            ' + ' + args.config_json if args.config_json else ''))
     else:
         cfg = cargar_config(extra=args.config_json)
         if ruta:
@@ -205,7 +211,15 @@ def modo_ejecutar(args):
         print('\nEvaluando {} en {} ({} episodio/s de {:.0f} s)'.format(
             nombre, args.config.upper(), args.episodios,
             cfg['eval_duracion_s']))
-        for ep in range(1, args.episodios + 1):
+        # Numeración a continuación de los episodios ya registrados de esta
+        # política y configuración, para no sobrescribir sus CSV de pasos.
+        previos = 0
+        if not nuevo:
+            with open(ruta_ep) as f:
+                previos = max([int(e['episodio']) for e in csv.DictReader(f)
+                               if e['politica'] == nombre
+                               and e['config'] == args.config] or [0])
+        for ep in range(previos + 1, previos + args.episodios + 1):
             ruta_csv = os.path.join(RUTA_EVAL, '{}_{}_ep{}.csv'.format(
                 nombre, args.config, ep))
             desenlace, detalle, dur, pasos = ejecutar_episodio(
@@ -248,6 +262,13 @@ def calcular_metricas(episodios, cfg):
     seps, desvs = [], []
     for e in episodios:
         cuenta[e['desenlace']] = cuenta.get(e['desenlace'], 0) + 1
+        if not os.path.exists(e['_csv']):
+            # El desenlace cuenta, pero sin registro por paso no hay
+            # separación ni desviación de ese episodio.
+            print('[aviso] Falta {}: el episodio cuenta en completados y '
+                  'desenlaces, pero no en separación ni desviación.'
+                  .format(e['_csv']))
+            continue
         s, d = _leer_pasos(e['_csv'])
         seps.append(s)
         desvs.append(d)
@@ -342,8 +363,8 @@ def main():
     p.add_argument('--modelo', default=None,
                    help='ruta del modelo (sustituye a --etiqueta)')
     p.add_argument('--config-json', default=None,
-                   help='valores de la configuración (p. ej. config_c1.json); '
-                        'sólo si el modelo no tiene su copia .json')
+                   help='valores que se aplican encima de la configuración '
+                        '(la copia .json del modelo, o config.json)')
     p.add_argument('--episodios', type=int, default=1,
                    help='ejecuciones de 120 s en esta configuración')
     p.add_argument('--detalle', action='store_true',

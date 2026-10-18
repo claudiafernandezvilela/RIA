@@ -139,12 +139,18 @@ def _blob_de_color(msg, color, size_min=0.0):
 class RoboboSeguirEnv(gym.Env):
     """Seguimiento del vehículo guía en la ciudad de RoboboSim.
 
-    Observación (Box, float32, dimensión 5) — según espacios.txt
+    Observación (Box, float32, dimensión 5, o 6 con obs_delta) — según
+    espacios.txt
         [0]  visible: 1 si el detector ve el blob verde, 0 si no
         [1]  x del blob, centrada y normalizada, en [-1, 1]
         [2]  tamaño del blob / S_max, recortado, en [0, 1]
         [3]  velocidad lineal ordenada en el paso anterior, en [-1, 1]
         [4]  velocidad angular ordenada en el paso anterior, en [-1, 1]
+        [5]  sólo si obs_delta = true en la configuración: variación del
+             tamaño respecto al paso anterior, dividida por delta_s_max y
+             recortada, en [-1, 1]. Positiva si el guía se acerca (frena),
+             negativa si se aleja (acelera). Vale 0 si la pelota no se ve
+             en este paso o en el anterior.
 
         Cuando la pelota no se ve: visible = 0 y tamaño = 0; se conserva
         la última x, que indica hacia qué lado se perdió.
@@ -253,6 +259,14 @@ class RoboboSeguirEnv(gym.Env):
         #          visible    x     tamaño   v     w
         low = [0.0, -1.0, 0.0, -1.0, -1.0]
         high = [1.0, 1.0, 1.0, 1.0, 1.0]
+        # Variación del tamaño (opcional, p. ej. sólo en C3): con un guía
+        # que acelera y frena, una única lectura no dice si se acerca o se
+        # aleja. Sin la opción la observación es la de siempre y los
+        # modelos ya entrenados siguen siendo válidos.
+        self.obs_delta = bool(c.get('obs_delta', False))
+        if self.obs_delta:
+            low.append(-1.0)
+            high.append(1.0)
         self.observation_space = spaces.Box(
             low=np.array(low, dtype=np.float32),
             high=np.array(high, dtype=np.float32), dtype=np.float32)
@@ -265,6 +279,7 @@ class RoboboSeguirEnv(gym.Env):
         self.pasos_perdido = 0
         self.ultima_accion = np.zeros(2, dtype=np.float32)
         self._ultima_x = 0.0
+        self._s_anterior = None   # tamaño del paso anterior (obs_delta)
         # Poses recientes del seguidor (sólo para detectar atascos)
         self._poses_recientes = deque(maxlen=c['atasco_pasos'] + 1)
 
@@ -423,7 +438,16 @@ class RoboboSeguirEnv(gym.Env):
         return 1.0, x, s
 
     def _observacion(self, visible, x, s):
+        """Se llama una vez por paso (y en reset): con obs_delta actualiza
+        también el tamaño anterior."""
         obs = [visible, x, s] + list(self.ultima_accion)
+        if self.obs_delta:
+            if visible and self._s_anterior is not None:
+                ds = (s - self._s_anterior) / self.cfg['delta_s_max']
+            else:
+                ds = 0.0
+            obs.append(float(np.clip(ds, -1.0, 1.0)))
+            self._s_anterior = s if visible else None
         return np.array(obs, dtype=np.float32)
 
     def _verdad(self):
@@ -479,7 +503,8 @@ class RoboboSeguirEnv(gym.Env):
 
 
 
-    def _recompensa(self, visible, x, s, choque, perdido, cambio_accion):
+    def _recompensa(self, visible, x, s, choque, perdido, cambio_accion,
+                    sep=None):
         """Los cuatro términos de espacios.txt más uno de suavidad.
         Coeficientes iniciales, a ajustar experimentalmente (y a declarar
         en la memoria).
@@ -497,6 +522,20 @@ class RoboboSeguirEnv(gym.Env):
           5. Suavidad:    -K_SUAVE * (|Δv| + |Δw|) de la acción normalizada
                           respecto al paso anterior, para que regule la
                           velocidad de forma progresiva y no a tirones.
+
+        Con dist_por_separacion = true en la configuración (C3), el término
+        de distancia se calcula con la separación real del simulador:
+        1 - |sep - sep_objetivo_m| / tol, recortado a [0, 1], con
+        tol = sep_tolerancia_cerca_m si está más cerca que el objetivo y
+        sep_tolerancia_lejos_m si está más lejos (o sep_tolerancia_m para
+        ambos),
+        y no se aplica la penalización por tamaño (4, s > S_cerca). Motivo:
+        el tamaño del blob no es monótono con la distancia (crece hasta
+        ~0,37 m y por debajo vuelve a bajar porque la pelota se sale de la
+        imagen), así que un objetivo en tamaño corresponde a dos distancias.
+        La separación es inferible por el robot (tamaño y su variación) y
+        sólo se usa al entrenar (apartado 4); hay que justificarlo en la
+        memoria. Si no hay separación (sin simulador), se usa el tamaño.
         """
         c = self.cfg
         K_DIST = 1.0
@@ -507,14 +546,26 @@ class RoboboSeguirEnv(gym.Env):
         R_CHOQUE = -10.0
         R_PERDIDO = -10.0
 
+        por_sep = bool(c.get('dist_por_separacion', False)) and sep is not None
+
         r = 0.0
         if visible:
-            err = abs(s - c['s_objetivo']) / c['s_tolerancia']
+            if por_sep:
+                # Tolerancia asimétrica: más estrecha por el lado cercano,
+                # porque por debajo de ~0,25 m la pelota se sale de la imagen
+                # y el guía se pierde aunque esté delante.
+                d = sep - c['sep_objetivo_m']
+                tol = (c.get('sep_tolerancia_cerca_m', c.get('sep_tolerancia_m'))
+                       if d < 0 else
+                       c.get('sep_tolerancia_lejos_m', c.get('sep_tolerancia_m')))
+                err = abs(d) / tol
+            else:
+                err = abs(s - c['s_objetivo']) / c['s_tolerancia']
             r_dist = 1.0 - min(err, 1.0)
             r_centro = 1.0 - abs(x)
             r += K_DIST * r_dist + K_CENTRO * r_centro
 
-            if s > c['s_cerca']:
+            if not por_sep and s > c['s_cerca']:
                 exceso = (s - c['s_cerca']) / (c['s_choque'] - c['s_cerca'])
                 r -= K_CERCA * min(exceso, 1.0)
         else:
@@ -543,6 +594,7 @@ class RoboboSeguirEnv(gym.Env):
         self.pasos_perdido = 0
         self.ultima_accion = np.zeros(2, dtype=np.float32)
         self._ultima_x = 0.0
+        self._s_anterior = None
         self._poses_recientes.clear()
 
         # Descartar lo acumulado durante el reinicio y esperar una lectura
@@ -605,7 +657,8 @@ class RoboboSeguirEnv(gym.Env):
         # del episodio (no entra en la observación ni en la recompensa).
         atascado = self._detectar_atasco(v)
 
-        r = self._recompensa(visible, x, s, choque, perdido, cambio_accion)
+        r = self._recompensa(visible, x, s, choque, perdido, cambio_accion,
+                             sep)
 
         terminated = bool(choque or perdido or atascado)
         truncated = bool(self.pasos >= self.pasos_max)

@@ -1,4 +1,6 @@
 {
+  "_comentario": "Configuración base. Es la de C1 tal cual (modelos p1_modelo_sac_c1_s1..s3) y la base sobre la que se aplica config_c3.json. Contiene la calibración del blob, los límites de la acción, el fin de episodio y los umbrales del protocolo del anexo B (eval_*, banda_*, desv_*).",
+
   "ns_base": "/robobo/robot_0/base",
   "ns_smartphone": "/robobo/robot_0/smartphone",
   "ns_sim": "/robobo/robot_0/sim",
