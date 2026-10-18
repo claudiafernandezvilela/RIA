@@ -18,3 +18,16 @@ p1_modelo_sac_c3_tilt100_s1,c3,3,completado,,120.56,303,2026-10-18 12:04:28
 p1_modelo_sac_c3_tilt100_s1,c3,4,guía perdido,sin ver 3.0 s,24.76,63,2026-10-18 12:04:55
 p1_modelo_sac_c3_delta_s1,c3,2,guía perdido,sep=0.989 m,29.10,72,2026-10-18 12:06:55
 p1_modelo_sac_c3_delta_s1,c3,3,guía perdido,sep=0.915 m,6.91,17,2026-10-18 12:07:03
+p1_modelo_sac_c2_s1,c2,1,guía perdido,sin ver 3.4 s,68.55,172,2026-10-18 15:27:02
+p1_modelo_sac_c2_s1,c2,2,guía perdido,sin ver 3.2 s,21.75,54,2026-10-18 15:27:26
+p1_modelo_sac_c2_s1,c2,3,guía perdido,sin ver 3.0 s,38.75,97,2026-10-18 15:28:07
+p1_modelo_sac_c2_s1,c2,4,completado,,120.35,301,2026-10-18 15:30:55
+p1_modelo_sac_c2_s2,c2,1,completado,,120.15,301,2026-10-18 18:03:44
+p1_modelo_sac_c2_s2,c2,2,completado,,120.16,304,2026-10-18 18:05:46
+p1_modelo_sac_c2_s2,c2,3,completado,,120.15,301,2026-10-18 18:07:48
+aleatoria,c2,1,guía perdido,sep=0.993 m,5.50,14,2026-10-18 18:14:39
+aleatoria,c2,2,guía perdido,sep=1.035 m,7.70,20,2026-10-18 18:14:49
+aleatoria,c2,3,guía perdido,sin ver 3.4 s,3.95,10,2026-10-18 18:14:55
+p1_modelo_sac_c2_s1,c2,5,guía perdido,sin ver 3.2 s,15.75,39,2026-10-18 18:15:50
+p1_modelo_sac_c2_s1,c2,6,completado,,120.36,303,2026-10-18 18:17:52
+p1_modelo_sac_c2_s1,c2,7,colisión,sep=0.110 m,66.70,167,2026-10-18 18:19:01

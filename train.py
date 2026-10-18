@@ -85,8 +85,9 @@ HIPER_PPO = dict(
     gamma=0.99,
     gae_lambda=0.95,
     clip_range=0.2,
-    gradient_steps=2,
-    ent_coef='auto_0.1',
+    # gradient_steps y ent_coef='auto' son opciones de SAC: PPO no las
+    # admite. Coeficiente de entropía fijo, valor por defecto de SB3.
+    ent_coef=0.0,
 )
 
 

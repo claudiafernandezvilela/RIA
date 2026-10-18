@@ -1,0 +1,11 @@
+{
+  "_comentario": "C2 (crucero 10-40). Mismos valores que config_c3.json (C3), porque en C2 el guía también cambia de velocidad: va a 40 en las rectas y a 10 en las curvas, con frenadas bruscas al entrar en ellas. Δs en la observación, distancia por separación real (objetivo 0,35 m, tolerancia asimétrica), tilt 100 y s_max 450; ver config_c3.json para la justificación de cada valor.",
+  "dist_por_separacion": true,
+  "sep_objetivo_m": 0.35,
+  "sep_tolerancia_cerca_m": 0.08,
+  "sep_tolerancia_lejos_m": 0.12,
+  "obs_delta": true,
+  "delta_s_max": 0.1,
+  "tilt_angulo": 100.0,
+  "s_max": 450.0
+}

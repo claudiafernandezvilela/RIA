@@ -2,6 +2,15 @@
 
 Banda objetivo 0.20-0.45 m · desviación < 15° · colisión < 0.12 m · perdido > 0.90 m o 3 s sin ver · episodios de 120 s
 
+## Política: aleatoria
+
+| Config. | Episodios | Completados | Colisión | Guía perdido | Otra causa | % pasos en banda | Separación media (m) | Desviación media (°) | % pasos < 15° |
+|---|---|---|---|---|---|---|---|---|---|
+| C1 | 3 | 0 (0 %) | 0 | 3 | 0 | 51.1 | 0.436 | 51.2 | 12.8 |
+| C2 | 3 | 0 (0 %) | 0 | 3 | 0 | 29.5 | 0.557 | 71.7 | 18.2 |
+| C3 | 3 | 0 (0 %) | 0 | 3 | 0 | 33.3 | 0.535 | 50.1 | 23.1 |
+| **Total** | 9 | 0 (0 %) | 0 | 9 | 0 | 38.5 | 0.507 | 57.8 | 17.7 |
+
 ## Política: p1_modelo_sac_c1_s1
 
 | Config. | Episodios | Completados | Colisión | Guía perdido | Otra causa | % pasos en banda | Separación media (m) | Desviación media (°) | % pasos < 15° |
@@ -23,12 +32,26 @@ Banda objetivo 0.20-0.45 m · desviación < 15° · colisión < 0.12 m · perdid
 | C1 | 1 | 1 (100 %) | 0 | 0 | 0 | 96.7 | 0.306 | 3.6 | 98.0 |
 | **Total** | 1 | 1 (100 %) | 0 | 0 | 0 | 96.7 | 0.306 | 3.6 | 98.0 |
 
+## Política: p1_modelo_sac_c2_s1
+
+| Config. | Episodios | Completados | Colisión | Guía perdido | Otra causa | % pasos en banda | Separación media (m) | Desviación media (°) | % pasos < 15° |
+|---|---|---|---|---|---|---|---|---|---|
+| C2 | 7 | 2 (29 %) | 1 | 4 | 0 | 68.5 | 0.398 | 6.8 | 94.1 |
+| **Total** | 7 | 2 (29 %) | 1 | 4 | 0 | 68.5 | 0.398 | 6.8 | 94.1 |
+
+## Política: p1_modelo_sac_c2_s2
+
+| Config. | Episodios | Completados | Colisión | Guía perdido | Otra causa | % pasos en banda | Separación media (m) | Desviación media (°) | % pasos < 15° |
+|---|---|---|---|---|---|---|---|---|---|
+| C2 | 3 | 3 (100 %) | 0 | 0 | 0 | 45.5 | 0.452 | 4.1 | 97.0 |
+| **Total** | 3 | 3 (100 %) | 0 | 0 | 0 | 45.5 | 0.452 | 4.1 | 97.0 |
+
 ## Política: p1_modelo_sac_c3_delta_s1
 
 | Config. | Episodios | Completados | Colisión | Guía perdido | Otra causa | % pasos en banda | Separación media (m) | Desviación media (°) | % pasos < 15° |
 |---|---|---|---|---|---|---|---|---|---|
-| C3 | 1 | 1 (100 %) | 0 | 0 | 0 | 22.7 | 0.502 | 3.8 | 99.0 |
-| **Total** | 1 | 1 (100 %) | 0 | 0 | 0 | 22.7 | 0.502 | 3.8 | 99.0 |
+| C3 | 3 | 1 (33 %) | 0 | 2 | 0 | 20.9 | 0.516 | 7.4 | 92.6 |
+| **Total** | 3 | 1 (33 %) | 0 | 2 | 0 | 20.9 | 0.516 | 7.4 | 92.6 |
 
 ## Política: p1_modelo_sac_c3_s1
 
