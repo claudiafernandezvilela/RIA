@@ -1,0 +1,4 @@
+id,generacion,episodio,calidad,pasos,desenlace,sep_ini,sep_med,sep_fin,en_banda,visible,x_abs,v_media,rec_robot_m,rec_pelota_m
+428,16,1,6.31,25,perdido,0.665,0.614,0.904,0.12,1.0,0.088,0.062,1.04,1.28
+428,16,2,6.29,25,perdido,0.668,0.625,0.91,0.08,1.0,0.098,0.061,1.03,1.27
+428,16,3,6.21,24,perdido,0.641,0.62,0.909,0.125,1.0,0.119,0.062,0.97,1.24

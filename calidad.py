@@ -36,9 +36,46 @@ import math
 K_VIVO = 0.2           # por paso vivo: gradiente desde la generación 0
 K_SEP = 0.6            # separación: término principal
 K_X = 0.2              # centrado de la pelota en la imagen
-SEP_OBJETIVO_M = 0.35  # máximo del triángulo de separación
-SEP_TOL_M = 0.15       # q_sep = 0 a 0,20 m y a 0,50 m
+SEP_BANDA_M = (0.25, 0.45)  # q_sep = 1 dentro de la banda (objetivo 0,35 m)
+SEP_CHOQUE_M = 0.12         # q_sep = 0: colisión
+SEP_LEJOS_M = 0.70          # q_sep = 0: demasiado lejos
+X_CENTRO = 0.2              # q_x = 1 si |x| <= 0,2
 P_CHOQUE = 10.0        # se resta al final si el episodio acaba en choque
+# El guía no arranca hasta que el seguidor se le acerca: si a los 10 s la
+# pelota no se ha desplazado 0,10 m, el episodio se da por fallido ahí
+# (si no, quedarse quieto mirando la pelota a 0,62 m daba Q ≈ 44)
+PASOS_ARRANQUE = 25
+ARRANQUE_M = 0.10
+
+
+def _q_sep(sep):
+    """1 dentro de la banda; baja en línea recta hasta 0 en la colisión y
+    a 0,70 m. Fuera de la banda siempre hay pendiente hacia ella."""
+    cerca, lejos = SEP_BANDA_M
+    if sep < cerca:
+        return max(0.0, (sep - SEP_CHOQUE_M) / (cerca - SEP_CHOQUE_M))
+    if sep > lejos:
+        return max(0.0, (SEP_LEJOS_M - sep) / (SEP_LEJOS_M - lejos))
+    return 1.0
+
+
+def _q_x(x):
+    """1 con la pelota en el centro de la imagen (|x| <= 0,2); 0 en el borde."""
+    return min(1.0, max(0.0, (1.0 - abs(x)) / (1.0 - X_CENTRO)))
+
+
+def sin_arranque(registro):
+    """Número de pasos tras el que se corta el episodio porque el guía no ha
+    arrancado (None si arrancó, si aún no han pasado 10 s o si no hay pose
+    del guía, p. ej. en el robot real)."""
+    if len(registro) < PASOS_ARRANQUE:
+        return None
+    inicio = registro[0].get('pelota_sim')
+    ahora = registro[PASOS_ARRANQUE - 1].get('pelota_sim')
+    if inicio is None or ahora is None:
+        return None
+    movido = math.hypot(ahora[0] - inicio[0], ahora[1] - inicio[1]) / 1000.0
+    return PASOS_ARRANQUE if movido < ARRANQUE_M else None
 
 
 def calidad(registro, n_max):
@@ -47,6 +84,9 @@ def calidad(registro, n_max):
     Un paso cuenta como vivo si en él no se ha producido ningún fallo
     (choque, perdido o atascado): el paso del fallo ya no suma.
     """
+    corte = sin_arranque(registro)
+    if corte is not None:
+        registro = registro[:corte]
     suma = 0.0
     for info in registro:
         if info.get('choque') or info.get('perdido') or info.get('atascado'):
@@ -58,26 +98,28 @@ def calidad(registro, n_max):
                 'El paso no tiene separación real. ¿Está el puente lanzado '
                 "con modules:=\"['blob','sim']\" y se lee la pose del guía?")
 
-        q_sep = max(0.0, 1.0 - abs(sep - SEP_OBJETIVO_M) / SEP_TOL_M)
-
-        q_x = (1.0 - min(abs(float(info['x'])), 1.0)
-               if info.get('visible') else 0.0)
+        q_sep = _q_sep(sep)
+        q_x = _q_x(float(info['x'])) if info.get('visible') else 0.0
 
         suma += K_VIVO + K_SEP * q_sep + K_X * q_x
 
     q = 100.0 * suma / n_max
 
-    # Choque con el guía o atasco contra el entorno: sólo en el último paso
-    if registro and (registro[-1].get('choque') or registro[-1].get('atascado')):
+    # Choque con el guía, atasco contra el entorno o guía sin arrancar
+    if corte is not None or (registro and (registro[-1].get('choque')
+                                           or registro[-1].get('atascado'))):
         q -= P_CHOQUE
     return float(q)
 
 
 def _paso(sep, x=0.0, visible=True, choque=False, perdido=False,
-          atascado=False):
-    """Un info con las claves que usa la calidad, como el de env.step()."""
+          atascado=False, pelota=None):
+    """Un info con las claves que usa la calidad, como el de env.step().
+    Sin `pelota`, el guía avanza 0,05 m por paso."""
+    _paso.k = getattr(_paso, 'k', 0) + 1
     return {'separacion': sep, 'x': x, 'visible': visible, 'choque': choque,
-            'perdido': perdido, 'atascado': atascado}
+            'perdido': perdido, 'atascado': atascado,
+            'pelota_sim': pelota or (0.0, 50.0 * _paso.k)}
 
 
 def _comprobar():
@@ -89,16 +131,18 @@ def _comprobar():
         'aleatorio': [_paso(0.35 + 0.06 * k, x=0.6, visible=k < 5)
                       for k in range(9)]
                      + [_paso(0.91, visible=False, perdido=True)],
-        # Aguanta 20 s en el borde lejano de la banda y lo pierde en una curva
+        # Aguanta 20 s dentro de la banda y lo pierde en una curva
         'regular': [_paso(0.45, x=0.2) for _ in range(49)]
                    + [_paso(0.95, visible=False, perdido=True)],
-        # Borde de la banda todo el episodio, centrado
-        'borde': [_paso(0.44, x=0.05) for _ in range(n)],
+        # Sigue al guía todo el episodio, pero lejos (0,60 m)
+        'lejos': [_paso(0.60, x=0.3) for _ in range(n)],
         # 0,35 m y centrado todo el episodio
         'bueno': [_paso(0.35, x=0.05) for _ in range(n)],
         # Como el bueno, pero no frena a tiempo y choca en el paso 115 (46 s)
         'choca': [_paso(0.35, x=0.05) for _ in range(114)]
                  + [_paso(0.10, choque=True)],
+        # Se queda quieto girando a 0,62 m: el guía no arranca
+        'quieto': [_paso(0.62, x=0.1, pelota=(0.0, 0.0)) for _ in range(n)],
     }
     print('{:10s} {:>8s}'.format('caso', 'calidad'))
     for nombre, reg in casos.items():

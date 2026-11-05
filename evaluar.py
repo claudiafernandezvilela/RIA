@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Práctica 1 — Evaluador con el protocolo común (anexo B del enunciado).
+Prácticas 1 y 2 — Evaluador con el protocolo común (anexo B del enunciado).
 
-Ejecuta una política (la aprendida, en modo determinista, o la aleatoria
-como línea base) durante episodios de 120 s y la mide con la verdad del
+Ejecuta una política (la aprendida, en modo determinista, la red de un
+genoma de NEAT o la aleatoria como línea base) durante episodios de 120 s y la mide con la verdad del
 simulador, con independencia de la recompensa:
 
   B.1  Pelota: pose del guía desplazada pelota_offset_m hacia atrás.
@@ -46,11 +46,22 @@ USO
 
       python3 evaluar.py --config c1 --aleatorio --config-json config_c1.json
 
+  Práctica 2: un genoma de NEAT con --genoma. Se evalúa con la
+  configuración de NEAT y del entorno de su evolución (config-p2.ini y
+  entorno.json de evoluciones/<etiqueta>/). --carpeta separa los
+  resultados de la P2 (incluidas las políticas de la P1 vueltas a evaluar
+  para la comparación, que tiene que hacerse en la misma sesión):
+
+      python3 evaluar.py --config c1 --carpeta p2_eval \\
+              --genoma evoluciones/c1_s2/genomas/mejor_gen020.pkl
+      python3 evaluar.py --config c1 --carpeta p2_eval --etiqueta c1_s1
+      python3 evaluar.py --metricas --carpeta p2_eval
+
   Cuando estén todas las ejecuciones, las tablas de métricas:
 
       python3 evaluar.py --metricas
 
-  Se generan en p1_eval/:
+  Se generan en p1_eval/ (o en --carpeta):
       <politica>_<config>_ep<n>.csv   registro por paso de cada episodio
       episodios.csv                   una fila por episodio (desenlace)
       metricas.md                     tablas del anexo B.4
@@ -151,40 +162,65 @@ def ejecutar_episodio(env, politica, cfg, ruta_csv):
     return desenlace, detalle, time.time() - t0, pasos
 
 
+def cargar_genoma(ruta_genoma):
+    """Red de NEAT de un genoma guardado en evoluciones/<etiqueta>/genomas/.
+    Devuelve (red, genoma, carpeta de la evolución): la carpeta tiene la
+    configuración de NEAT (config-p2.ini) y la del entorno (entorno.json)
+    con las que se evolucionó."""
+    import pickle
+    import neat
+    carpeta = os.path.dirname(os.path.dirname(os.path.abspath(ruta_genoma)))
+    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
+                         neat.DefaultSpeciesSet, neat.DefaultStagnation,
+                         os.path.join(carpeta, 'config-p2.ini'))
+    with open(ruta_genoma, 'rb') as f:
+        genoma = pickle.load(f)
+    return (neat.nn.FeedForwardNetwork.create(genoma, config), genoma,
+            carpeta)
+
+
 def modo_ejecutar(args):
     from env import RoboboSeguirEnv, cargar_config
-    from train import cargar_algoritmo, config_de_modelo, ruta_modelo
 
-    # Configuración: la guardada junto al modelo (la de su entrenamiento),
-    # porque la escala de la acción (v_min, v_max, w_max) tiene que ser
-    # la misma. Para la política aleatoria, o un modelo antiguo sin copia,
-    # config.json con --config-json encima.
+    # Los umbrales del protocolo se toman siempre de config.json
+    umbrales = {k: v for k, v in cargar_config().items()
+                if k.startswith(('eval_', 'banda_', 'desv_'))}
+    extra = ' + ' + args.config_json if args.config_json else ''
+
     ruta = None
-    if not args.aleatorio:
-        ruta = args.modelo or ruta_modelo(args.algoritmo, args.etiqueta)
-        ruta = ruta[:-4] if ruta.endswith('.zip') else ruta
-        if not os.path.exists(ruta + '.zip'):
-            raise SystemExit('No existe {}.zip'.format(ruta))
-    if ruta and os.path.exists(config_de_modelo(ruta)):
-        # Los umbrales del protocolo se toman siempre de config.json.
-        # --config-json se aplica encima de la copia del modelo: sirve para
-        # probar un cambio que no afecta a la red (p. ej. el tilt) o para
-        # la calibración del robot real.
-        cfg = dict(cargar_config(config_de_modelo(ruta),
-                                 extra=args.config_json),
-                   **{k: v for k, v in cargar_config().items()
-                      if k.startswith(('eval_', 'banda_', 'desv_'))})
-        print('Configuración del modelo: {}{}'.format(
-            config_de_modelo(ruta),
-            ' + ' + args.config_json if args.config_json else ''))
+    if args.genoma:
+        # P2: la configuración del entorno de la evolución del genoma
+        # (observación con la que se evolucionó y escala de la acción)
+        red, genoma, carpeta = cargar_genoma(args.genoma)
+        cfg = dict(cargar_config(os.path.join(carpeta, 'entorno.json'),
+                                 extra=args.config_json), **umbrales)
+        print('Configuración de la evolución: {}{}'.format(
+            os.path.join(carpeta, 'entorno.json'), extra))
     else:
-        cfg = cargar_config(extra=args.config_json)
-        if ruta:
-            print('[aviso] {} no tiene copia de su configuración; se usa '
-                  'config.json{}. Comprobar que v_min, v_max y w_max son '
-                  'los del entrenamiento.'.format(
-                      ruta, ' + ' + args.config_json if args.config_json
-                      else ''))
+        # P1: la configuración guardada junto al modelo (la de su
+        # entrenamiento), porque la escala de la acción (v_min, v_max,
+        # w_max) tiene que ser la misma. Para la política aleatoria, o un
+        # modelo antiguo sin copia, config.json con --config-json encima.
+        from train import cargar_algoritmo, config_de_modelo, ruta_modelo
+        if not args.aleatorio:
+            ruta = args.modelo or ruta_modelo(args.algoritmo, args.etiqueta)
+            ruta = ruta[:-4] if ruta.endswith('.zip') else ruta
+            if not os.path.exists(ruta + '.zip'):
+                raise SystemExit('No existe {}.zip'.format(ruta))
+        if ruta and os.path.exists(config_de_modelo(ruta)):
+            # --config-json se aplica encima de la copia del modelo: sirve
+            # para probar un cambio que no afecta a la red (p. ej. el tilt)
+            # o para la calibración del robot real.
+            cfg = dict(cargar_config(config_de_modelo(ruta),
+                                     extra=args.config_json), **umbrales)
+            print('Configuración del modelo: {}{}'.format(
+                config_de_modelo(ruta), extra))
+        else:
+            cfg = cargar_config(extra=args.config_json)
+            if ruta:
+                print('[aviso] {} no tiene copia de su configuración; se usa '
+                      'config.json{}. Comprobar que v_min, v_max y w_max son '
+                      'los del entrenamiento.'.format(ruta, extra))
 
     # El fin por pelota no vista lo decide el evaluador con el reloj
     # (3 s, anexo B.3), no el entorno en pasos: se desactiva el de éste.
@@ -194,7 +230,12 @@ def modo_ejecutar(args):
                           verbose=args.detalle)
 
     try:
-        if args.aleatorio:
+        if args.genoma:
+            # p. ej. p2_c1_s2_id568: evolución e id del genoma
+            nombre = 'p2_{}_id{}'.format(os.path.basename(carpeta), genoma.key)
+            politica = lambda obs: np.array(red.activate(obs),
+                                            dtype=np.float32)
+        elif args.aleatorio:
             nombre = 'aleatoria'
             politica = lambda obs: env.action_space.sample()
         else:
@@ -203,8 +244,8 @@ def modo_ejecutar(args):
             # Política determinista (anexo B.2)
             politica = lambda obs: modelo.predict(obs, deterministic=True)[0]
 
-        os.makedirs(RUTA_EVAL, exist_ok=True)
-        ruta_ep = os.path.join(RUTA_EVAL, 'episodios.csv')
+        os.makedirs(args.carpeta, exist_ok=True)
+        ruta_ep = os.path.join(args.carpeta, 'episodios.csv')
         nuevo = not os.path.exists(ruta_ep)
 
         print('\nEvaluando {} en {} ({} episodio/s de {:.0f} s)'.format(
@@ -219,7 +260,7 @@ def modo_ejecutar(args):
                                if e['politica'] == nombre
                                and e['config'] == args.config] or [0])
         for ep in range(previos + 1, previos + args.episodios + 1):
-            ruta_csv = os.path.join(RUTA_EVAL, '{}_{}_ep{}.csv'.format(
+            ruta_csv = os.path.join(args.carpeta, '{}_{}_ep{}.csv'.format(
                 nombre, args.config, ep))
             desenlace, detalle, dur, pasos = ejecutar_episodio(
                 env, politica, cfg, ruta_csv)
@@ -297,13 +338,13 @@ def modo_metricas(args):
                            'config.json')) as f:
         cfg = json.load(f)
 
-    ruta_ep = os.path.join(RUTA_EVAL, 'episodios.csv')
+    ruta_ep = os.path.join(args.carpeta, 'episodios.csv')
     if not os.path.exists(ruta_ep):
         raise SystemExit('No hay {}. Hay que evaluar primero.'.format(ruta_ep))
     with open(ruta_ep) as f:
         episodios = list(csv.DictReader(f))
     for e in episodios:
-        e['_csv'] = os.path.join(RUTA_EVAL, '{}_{}_ep{}.csv'.format(
+        e['_csv'] = os.path.join(args.carpeta, '{}_{}_ep{}.csv'.format(
             e['politica'], e['config'], e['episodio']))
 
     lineas = ['# Métricas del protocolo (anexo B.4)', '',
@@ -341,9 +382,9 @@ def modo_metricas(args):
 
     texto = '\n'.join(lineas)
     print(texto)
-    with open(os.path.join(RUTA_EVAL, 'metricas.md'), 'w') as f:
+    with open(os.path.join(args.carpeta, 'metricas.md'), 'w') as f:
         f.write(texto + '\n')
-    print('Guardado en {}'.format(os.path.join(RUTA_EVAL, 'metricas.md')))
+    print('Guardado en {}'.format(os.path.join(args.carpeta, 'metricas.md')))
 
 
 def main():
@@ -353,7 +394,10 @@ def main():
     modo.add_argument('--aleatorio', action='store_true',
                       help='línea base: política aleatoria')
     modo.add_argument('--metricas', action='store_true',
-                      help='calcula las tablas a partir de p1_eval/')
+                      help='calcula las tablas a partir de --carpeta')
+    modo.add_argument('--genoma', default=None,
+                      help='P2: genoma de NEAT (evoluciones/<etiqueta>/'
+                           'genomas/mejor_genNNN.pkl)')
     p.add_argument('--config', choices=CONFIGS,
                    help='configuración del guía puesta en el simulador')
     p.add_argument('--algoritmo', choices=['sac', 'ppo'], default='sac')
@@ -366,6 +410,9 @@ def main():
                         '(la copia .json del modelo, o config.json)')
     p.add_argument('--episodios', type=int, default=1,
                    help='ejecuciones de 120 s en esta configuración')
+    p.add_argument('--carpeta', default=RUTA_EVAL,
+                   help='carpeta de los registros y las métricas '
+                        '(p1_eval; p2_eval para la P2)')
     p.add_argument('--detalle', action='store_true',
                    help='imprime una línea por paso')
     args = p.parse_args()
