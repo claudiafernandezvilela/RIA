@@ -127,7 +127,11 @@ def main():
     args = p.parse_args()
 
     # config-p2.ini y entorno.json de la evolución del genoma
-    carpeta = os.path.dirname(os.path.dirname(os.path.abspath(args.genoma)))
+    # genomas/mejor_genNNN.pkl o mejor_genoma.pkl, en la carpeta de la
+    # evolución: se busca config-p2.ini al lado o un nivel por encima
+    carpeta = os.path.dirname(os.path.abspath(args.genoma))
+    if not os.path.exists(os.path.join(carpeta, 'config-p2.ini')):
+        carpeta = os.path.dirname(carpeta)
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          os.path.join(carpeta, 'config-p2.ini'))

@@ -163,13 +163,18 @@ def ejecutar_episodio(env, politica, cfg, ruta_csv):
 
 
 def cargar_genoma(ruta_genoma):
-    """Red de NEAT de un genoma guardado en evoluciones/<etiqueta>/genomas/.
+    """Red de NEAT de un genoma guardado en evoluciones/<etiqueta>/genomas/
+    o de evoluciones/<etiqueta>/mejor_genoma.pkl.
     Devuelve (red, genoma, carpeta de la evolución): la carpeta tiene la
     configuración de NEAT (config-p2.ini) y la del entorno (entorno.json)
     con las que se evolucionó."""
     import pickle
     import neat
-    carpeta = os.path.dirname(os.path.dirname(os.path.abspath(ruta_genoma)))
+    # genomas/mejor_genNNN.pkl o mejor_genoma.pkl, en la carpeta de la
+    # evolución: se busca config-p2.ini al lado o un nivel por encima
+    carpeta = os.path.dirname(os.path.abspath(ruta_genoma))
+    if not os.path.exists(os.path.join(carpeta, 'config-p2.ini')):
+        carpeta = os.path.dirname(carpeta)
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                          neat.DefaultSpeciesSet, neat.DefaultStagnation,
                          os.path.join(carpeta, 'config-p2.ini'))
