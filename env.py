@@ -153,7 +153,9 @@ class RoboboSeguirEnv(gym.Env):
              en este paso o en el anterior.
 
         Cuando la pelota no se ve: visible = 0 y tamaño = 0; se conserva
-        la última x, que indica hacia qué lado se perdió.
+        la última x, que indica hacia qué lado se perdió. Con
+        obs_memoria = true se conserva también el último tamaño visto, en
+        lugar de 0 (que la red confunde con "muy lejos" y acelera).
 
         Toda la observación procede de sensores del seguidor por ROS 2
         (blobs + órdenes propias). Nada del módulo sim (apartado 4).
@@ -264,6 +266,11 @@ class RoboboSeguirEnv(gym.Env):
         # aleja. Sin la opción la observación es la de siempre y los
         # modelos ya entrenados siguen siendo válidos.
         self.obs_delta = bool(c.get('obs_delta', False))
+        # Memoria del último avistamiento (opcional, P2): sin la pelota a la
+        # vista, [2] repite el último tamaño visto en vez de 0. Si se perdió
+        # por estar demasiado cerca, la red sigue "viéndola" cerca y frena.
+        # Sin la opción la observación es la de siempre.
+        self.obs_memoria = bool(c.get('obs_memoria', False))
         if self.obs_delta:
             low.append(-1.0)
             high.append(1.0)
@@ -280,6 +287,7 @@ class RoboboSeguirEnv(gym.Env):
         self.ultima_accion = np.zeros(2, dtype=np.float32)
         self._ultima_x = 0.0
         self._s_anterior = None   # tamaño del paso anterior (obs_delta)
+        self._ultimo_s = None     # último tamaño visto (obs_memoria)
         # Poses recientes del seguidor (sólo para detectar atascos)
         self._poses_recientes = deque(maxlen=c['atasco_pasos'] + 1)
 
@@ -439,8 +447,14 @@ class RoboboSeguirEnv(gym.Env):
 
     def _observacion(self, visible, x, s):
         """Se llama una vez por paso (y en reset): con obs_delta actualiza
-        también el tamaño anterior."""
-        obs = [visible, x, s] + list(self.ultima_accion)
+        también el tamaño anterior y, con obs_memoria, el último visto."""
+        s_obs = s
+        if self.obs_memoria:
+            if visible:
+                self._ultimo_s = s
+            elif self._ultimo_s is not None:
+                s_obs = self._ultimo_s
+        obs = [visible, x, s_obs] + list(self.ultima_accion)
         if self.obs_delta:
             if visible and self._s_anterior is not None:
                 ds = (s - self._s_anterior) / self.cfg['delta_s_max']
@@ -595,6 +609,7 @@ class RoboboSeguirEnv(gym.Env):
         self.ultima_accion = np.zeros(2, dtype=np.float32)
         self._ultima_x = 0.0
         self._s_anterior = None
+        self._ultimo_s = None
         self._poses_recientes.clear()
 
         # Descartar lo acumulado durante el reinicio y esperar una lectura

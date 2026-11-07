@@ -1,0 +1,12 @@
+{
+  "_comentario": "P2, observación con memoria del último avistamiento: igual que config_c3.json más obs_memoria. Sin la pelota a la vista el tamaño de la observación repite el último visto en vez de 0: el id 77 (inc_s2c) y el 544 (inc_s2) la perdían por estar demasiado cerca en una curva y, con tamaño 0, aceleraban a ciegas y chocaban o se pasaban.",
+  "dist_por_separacion": true,
+  "sep_objetivo_m": 0.35,
+  "sep_tolerancia_cerca_m": 0.08,
+  "sep_tolerancia_lejos_m": 0.12,
+  "obs_delta": true,
+  "delta_s_max": 0.1,
+  "tilt_angulo": 100.0,
+  "s_max": 450.0,
+  "obs_memoria": true
+}
