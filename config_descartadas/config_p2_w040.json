@@ -1,0 +1,4 @@
+{
+  "_comentario": "P2, escala del giro: se aplica con evaluar.py --config-json encima del entorno.json de la evolución. Las políticas SAC de la P1 que completan C2 y C3 (misma cámara, w_max 0,8) sólo superan |w| = 0,4 en el 1 % de los pasos; la red id 404 lo hace en el 10-12 %, oscila y pierde la pelota de lado. Con w_max 0,4 la misma salida de la red ordena la mitad de giro.",
+  "w_max": 0.4
+}

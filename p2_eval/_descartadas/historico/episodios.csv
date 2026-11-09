@@ -1,0 +1,24 @@
+politica,config,episodio,desenlace,detalle,duracion_s,pasos,fecha
+p2_c1_s2_id188,c1,1,completado,,120.55,334,2026-11-03 16:49:15
+p2_inc_s2_id544,c2,1,completado,,120.55,333,2026-11-03 16:53:58
+p2_inc_s2_id188,c1,1,completado,,120.35,330,2026-11-03 17:50:28
+p2_c1_s2_id188,c1,2,completado,,120.35,330,2026-11-03 17:53:50
+p2_c1_s2_id188,c1,3,completado,,120.55,331,2026-11-03 18:19:12
+p2_inc_s2b_id493,c2,1,completado,,120.55,334,2026-11-06 16:26:43
+p2_inc_s2b_id493,c2,2,guía perdido,sin ver 3.2 s,51.35,145,2026-11-06 16:27:36
+p2_inc_s2b_id493,c2,3,guía perdido,sin ver 3.4 s,50.35,136,2026-11-06 16:28:28
+p2_inc_s2_id544,c2,2,guía perdido,sin ver 3.4 s,26.15,70,2026-11-06 16:35:40
+p2_inc_s2_id544,c2,3,completado,,120.35,336,2026-11-06 16:37:43
+p2_inc_s2c_id77,c1,1,colisión,sep=0.113 m,111.10,284,2026-11-06 19:19:29
+p2_inc_s2c_id238,c1,1,completado,,120.35,306,2026-11-07 11:11:40
+p2_inc_s2c_id238,c1,2,completado,,120.15,307,2026-11-07 11:13:42
+p2_inc_s2c_id238,c1,3,completado,,120.15,314,2026-11-07 11:15:44
+p2_inc_s2c_id268,c1,1,completado,,120.15,310,2026-11-07 11:18:00
+p2_inc_s2c_id268,c1,2,completado,,120.35,313,2026-11-07 11:20:03
+p2_inc_s2c_id268,c1,3,completado,,120.35,313,2026-11-07 11:22:05
+p2_inc_s2c_v30_id404,c2,1,guía perdido,sin ver 3.2 s,50.15,130,2026-11-08 15:43:44
+p2_inc_s2c_v30_id404,c2,2,completado,,120.15,312,2026-11-08 15:45:46
+p2_inc_s2c_v30_id404,c2,3,guía perdido,sin ver 3.2 s,51.75,135,2026-11-08 15:46:40
+p2_inc_s2c_v30_id404,c3,1,guía perdido,sin ver 3.4 s,73.15,191,2026-11-08 17:57:38
+p2_inc_s2c_v30_id404,c3,2,colisión,sep=0.104 m,44.90,118,2026-11-08 17:58:25
+p2_inc_s2c_v30_id404,c3,3,guía perdido,sin ver 3.4 s,104.15,269,2026-11-08 18:00:11

@@ -1,0 +1,12 @@
+{
+  "_comentario": "P2 con v_max 0,30 m/s. Valores de config_c3.json y v_max subida de 0,20 a 0,30. En los registros de evaluación en C2 (p2_eval/p2_inc_s2_id544_c2_ep*.csv) el guía va a ~0,20 m/s en las rectas (velocidad 40), igual que la velocidad máxima del seguidor: sin margen para recuperar la distancia perdida al arrancar o en una curva. En C1 el guía va a ~0,05 m/s.",
+  "dist_por_separacion": true,
+  "sep_objetivo_m": 0.35,
+  "sep_tolerancia_cerca_m": 0.08,
+  "sep_tolerancia_lejos_m": 0.12,
+  "obs_delta": true,
+  "delta_s_max": 0.1,
+  "tilt_angulo": 100.0,
+  "s_max": 450.0,
+  "v_max": 0.3
+}

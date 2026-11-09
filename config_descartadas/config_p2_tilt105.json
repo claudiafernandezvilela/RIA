@@ -1,0 +1,4 @@
+{
+  "_comentario": "P2, prueba de cámara más baja: se aplica con evaluar.py --config-json encima del entorno.json de la evolución. Con tilt 80, 90 y 100 el máximo del tamaño pasa de ~0,50 a ~0,37 y ~0,30 m (la pelota se corta más cerca), y desde 0,40 m el tamaño casi no cambia entre tilt 90 y 100.",
+  "tilt_angulo": 105.0
+}
