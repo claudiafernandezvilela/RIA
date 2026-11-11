@@ -1,0 +1,10 @@
+politica,config,episodio,desenlace,detalle,duracion_s,pasos,fecha
+p2_inc_s3c_id803,c1,1,colisión,sep=0.104 m,48.71,130,2026-11-11 13:57:33
+p2_inc_s3c_id803,c1,2,colisión,sep=0.111 m,48.30,125,2026-11-11 13:58:23
+p2_inc_s3c_id803,c1,3,guía perdido,sep=0.927 m,46.91,123,2026-11-11 13:59:11
+p2_inc_s3c_id803,c2,1,completado,,120.55,319,2026-11-11 14:04:06
+p2_inc_s3c_id803,c2,2,completado,,120.15,327,2026-11-11 14:06:08
+p2_inc_s3c_id803,c2,3,completado,,120.55,326,2026-11-11 14:08:10
+p2_inc_s3c_id803,c3,1,guía perdido,sep=0.909 m,94.71,254,2026-11-11 14:12:50
+p2_inc_s3c_id803,c3,2,guía perdido,sin ver 3.4 s,23.75,66,2026-11-11 14:13:16
+p2_inc_s3c_id803,c3,3,completado,,120.56,327,2026-11-11 14:15:18
