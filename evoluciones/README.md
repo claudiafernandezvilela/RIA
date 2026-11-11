@@ -1,19 +1,19 @@
-# Evoluciones finales de la P2
+# Evoluciones de la P2
 
-Aquí están solo las evoluciones del controlador final, una por semilla. El resto
-de pruebas está en [`_descartadas/`](_descartadas/README.md).
+Aquí están las evoluciones del controlador final (una por semilla) y las de C4.
+El resto de pruebas está en [`_descartadas/`](_descartadas/README.md).
 
 | Semilla | Carpeta | Controlador | Estado |
 |---|---|---|---|
-| 2 | `inc_s2c_w40/` | id 1038 (`genomas/mejor_gen039.pkl`) | Terminada y evaluada: 9/9 episodios |
-| Segunda semilla | pendiente | pendiente | Por hacer, con el mismo protocolo |
+| 2 | `inc_s2c_w40/` | id 1038 (`genomas/mejor_gen039.pkl`) | Terminada y evaluada: 9/9 episodios en C1-C3 |
+| 3 | `inc_s3c/` | pendiente | Generaciones 0-39 hechas. El mejor final, id 971, completa 1/9 |
 
 Resultados de la evaluación: [`../p2_eval/README.md`](../p2_eval/README.md).
 
-## Protocolo de la semilla 2
+## Protocolo de las semillas 2 y 3
 
-Evolución incremental. Una sola calidad (`calidad.py`) en toda la cadena y
-1 episodio por individuo.
+Evolución incremental. Una sola calidad (`calidad.py`, banda 0,25-0,45 m) en
+toda la cadena y 1 episodio por individuo.
 
 | Generaciones | Guía | Pasos máx. | `v_max` | `w_max` |
 |---|---|---|---|---|
@@ -22,14 +22,50 @@ Evolución incremental. Una sola calidad (`calidad.py`) en toda la cadena y
 | 20-29 | C2 (Crucero 10-40) | 300 | 0,30 | 0,4 |
 | 30-39 | C3 (Variable 10-40) | 300 | 0,30 | 0,4 |
 
-- Las generaciones 0-9 vienen de `_descartadas/inc_s2c`. El punto de control
-  `chk/p2-10` es idéntico al de esa evolución.
 - `entorno.json` guarda la configuración usada desde la generación 10.
-- El último punto de control de la evolución es `chk/p2-40`.
 - El episodio se alargó a 300 pasos porque con 175 (unos 67 s) la evolución no
   llegaba a la salida de la tercera curva.
 - `w_max` se redujo a 0,4 porque la red giraba mucho más que las políticas SAC
   de la P1 y perdía la pelota de lado.
+
+Semilla 2:
+
+- Las generaciones 0-9 vienen de `_descartadas/inc_s2c`. El punto de control
+  `chk/p2-10` es idéntico al de esa evolución.
+- El último punto de control de la evolución es `chk/p2-40`.
+
+Semilla 3:
+
+- Evolución completa en la misma carpeta, puntos de control `chk/p2-1` a
+  `chk/p2-40`.
+- Mejor de cada generación en la etapa C3: 798 (31), 803 (32-33), 876 (34),
+  918 (35-36) y 971 (37-39). El 754 es el mejor de la generación 29, antes
+  de C3.
+
+## C4 (Variable 10-40 con paradas)
+
+Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
+`Stop chances` 60. Evaluaciones en [`../p2_eval/c4/`](../p2_eval/c4/README.md).
+
+| Carpeta | Origen | Generaciones | Pasos | Población | Episodios por individuo | Banda de la calidad |
+|---|---|---|---|---|---|---|
+| `inc_s2c_w40_c4/` | Continuación de `inc_s2c_w40` desde `chk/p2-40` | 40-59 | 300 | 30 | 1 | 0,25-0,45 m |
+| `inc_s2c_w40_c4e2/` | Continuación de la anterior desde `chk/p2-60` | preparada, sin lanzar | 300 | 30 | 2 | 0,25-0,45 m |
+| `dir_c4_s5/` | Desde cero, semilla 5 (`config_c4_dir.json`) | 0-34 | 200 | 20 | 2 | 0,30-0,45 m |
+| `dir_c4p_s6/`, `dir_c4p_s7/` | Desde cero, semillas 6 y 7, con el término de parada (`config_c4_parada.json`) | 0-34 | 200 | 20 | 2 | 0,30-0,45 m |
+| `dir_c4_s5_c3/` | Continuación de la anterior desde `chk/p2-35`, con el guía en C3 (sin paradas), para un controlador único C1-C4 | 35-, preparada | 200 | 20 | 2 | 0,30-0,45 m |
+
+- `dir_c4_s5` usa una segunda formulación de la calidad: la banda en la que la
+  separación puntúa al máximo empieza en 0,30 m, porque a unos 0,23 m la pelota
+  se sale de la imagen por abajo.
+- `dir_c4p_s6` y `dir_c4p_s7` usan una tercera formulación: además, con el
+  guía parado la puntuación del paso se multiplica por 1 − v/0,05 (0 a partir
+  de 0,05 m/s) y se restan 3 puntos por cada parada en la que el seguidor
+  no llega a estar quieto (v < 0,01 m/s durante 2 pasos). Con la calidad de `dir_c4_s5`, la evolución aprovechaba las
+  paradas para acercarse al guía en lugar de detenerse.
+- Con 2 episodios por individuo, la calidad es la media de los dos
+  (`episodios_individuo.txt` en la carpeta).
+- La consola de `dir_c4_s5` está en `../consola_dir_c4_s5.log`.
 
 ## Contenido de cada carpeta
 
@@ -40,5 +76,6 @@ Evolución incremental. Una sola calidad (`calidad.py`) en toda la cadena y
 | `evolucion.csv` | Una fila por generación |
 | `genomas/mejor_genNNN.pkl` | Mejor genoma de cada generación |
 | `chk/p2-N` | Punto de control: población antes de la generación N |
+| `episodios_individuo.txt` | Episodios por individuo, si no es 1 |
 
 `--guia` solo anota el CSV. El guía se cambia a mano en RoboboSim.

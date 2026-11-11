@@ -176,23 +176,30 @@ def desenlace(registro):
     return 'completo'
 
 
-def hacer_eval_genomes(env, n_max):
-    """Función de evaluación que se pasa a Population.run(). Si falla la
-    comunicación (el entorno lanza RuntimeError) o falta la separación real
-    (calidad lanza ValueError), la excepción se deja subir: no se asigna
-    calidad 0 a un individuo por un fallo de la infraestructura
-    (indicaciones, 6.1). La evolución se reanuda desde el último punto de
-    control."""
+def hacer_eval_genomes(env, n_max, episodios=1, banda=None, parada=False):
+    """Función de evaluación que se pasa a Population.run(). Cada individuo
+    se evalúa en `episodios` episodios y su calidad es la media: con las
+    paradas aleatorias de C4, un solo episodio premia al que tuvo suerte.
+    Si falla la comunicación (el entorno lanza RuntimeError) o falta la
+    separación real (calidad lanza ValueError), la excepción se deja subir:
+    no se asigna calidad 0 a un individuo por un fallo de la
+    infraestructura (indicaciones, 6.1). La evolución se reanuda desde el
+    último punto de control."""
     def eval_genomes(genomas, config):
         for i, (gid, genoma) in enumerate(genomas, 1):
             t0 = time.time()
             red = neat.nn.FeedForwardNetwork.create(genoma, config)
-            registro = evaluar_genoma(env, red, n_max)
-            genoma.fitness = calidad(registro, n_max)
+            cals, pasos, finales = [], [], []
+            for _ in range(episodios):
+                registro = evaluar_genoma(env, red, n_max)
+                cals.append(calidad(registro, n_max, banda, parada))
+                pasos.append(str(len(registro)))
+                finales.append(desenlace(registro))
+            genoma.fitness = statistics.mean(cals)
             print('  individuo {:2d}/{}  id {:5d}  calidad {:6.1f}  '
-                  'pasos {:3d}/{}  {:9s} {:5.1f} s'.format(
-                      i, len(genomas), gid, genoma.fitness, len(registro),
-                      n_max, desenlace(registro), time.time() - t0),
+                  'pasos {}/{}  {:9s} {:5.1f} s'.format(
+                      i, len(genomas), gid, genoma.fitness, '+'.join(pasos),
+                      n_max, '+'.join(finales), time.time() - t0),
                   flush=True)
     return eval_genomes
 
@@ -232,6 +239,10 @@ def preparar_carpeta(args, carpeta):
     with open(RUTA_CONFIG_NEAT) as f:
         texto = f.read()
     texto = re.sub(r'(?m)^seed\s*=.*$', 'seed = {}'.format(args.semilla), texto)
+    if args.poblacion is not None:
+        texto = re.sub(r'(?m)^pop_size\s*=.*$',
+                       'pop_size               = {}'.format(args.poblacion),
+                       texto)
     with open(os.path.join(carpeta, 'config-p2.ini'), 'w') as f:
         f.write(texto)
 
@@ -262,6 +273,13 @@ def main():
                         'de 6 entradas, tilt 100); sólo en evolución nueva')
     p.add_argument('--reanudar', action='store_true',
                    help='continuar desde el último punto de control')
+    p.add_argument('--poblacion', type=int, default=None,
+                   help='tamaño de la población (pop_size de config-p2.ini '
+                        'por defecto); sólo en evolución nueva')
+    p.add_argument('--episodios-individuo', type=int, default=None,
+                   help='episodios por individuo; la calidad es la media '
+                        '(1 por defecto). Se guarda en la carpeta y al '
+                        'reanudar se usa el guardado si no se indica')
     args = p.parse_args()
 
     carpeta = os.path.join(RUTA_EVOLUCIONES, args.etiqueta)
@@ -313,13 +331,38 @@ def main():
     poblacion.add_reporter(RegistroGeneracion(
         ruta_csv, os.path.join(carpeta, 'genomas'), args.guia, args.pasos_max))
 
-    print('Guía: {}   episodio: {} pasos   generaciones: {} -> {}\n'.format(
-        args.guia, args.pasos_max, poblacion.generation, args.generaciones))
+    # Episodios por individuo: se guardan en la carpeta para que una
+    # reanudación sin la opción siga con el mismo valor
+    ruta_epi = os.path.join(carpeta, 'episodios_individuo.txt')
+    guardado = None
+    if os.path.exists(ruta_epi):
+        with open(ruta_epi) as f:
+            guardado = int(f.read().split()[0])
+    if args.episodios_individuo is None:
+        args.episodios_individuo = guardado or 1
+    if args.episodios_individuo < 1:
+        raise SystemExit('--episodios-individuo debe ser 1 o más.')
+    if args.episodios_individuo != guardado:
+        with open(ruta_epi, 'w') as f:
+            f.write('{} desde la generación {}\n'.format(
+                args.episodios_individuo, poblacion.generation))
+
+    print('Guía: {}   episodio: {} pasos   episodios por individuo: {}   '
+          'banda de la calidad: {} m   término de parada: {}   '
+          'generaciones: {} -> {}\n'.format(
+              args.guia, args.pasos_max, args.episodios_individuo,
+              cfg.get('calidad_banda_m', '0.25-0.45 (por defecto)'),
+              'sí' if cfg.get('calidad_parada') else 'no',
+              poblacion.generation, args.generaciones))
 
     env = RoboboSeguirEnv(pasos_max=args.pasos_max, usar_simulador=True,
                           config=cfg)
     try:
-        mejor = poblacion.run(hacer_eval_genomes(env, args.pasos_max), faltan)
+        mejor = poblacion.run(
+            hacer_eval_genomes(env, args.pasos_max, args.episodios_individuo,
+                               cfg.get('calidad_banda_m'),
+                               bool(cfg.get('calidad_parada'))),
+            faltan)
         with open(os.path.join(carpeta, 'mejor_genoma.pkl'), 'wb') as f:
             pickle.dump(mejor, f)
         print('\nEvolución terminada. Mejor calidad: {:.1f}'.format(mejor.fitness))

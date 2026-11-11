@@ -46,12 +46,27 @@ P_CHOQUE = 10.0        # se resta al final si el episodio acaba en choque
 # (si no, quedarse quieto mirando la pelota a 0,62 m daba Q ≈ 44)
 PASOS_ARRANQUE = 25
 ARRANQUE_M = 0.10
+# Término de parada (segunda formulación, opción calidad_parada del
+# entorno.json): mientras el guía está parado, la puntuación del paso se
+# multiplica por q_parada = 1 - v / V_PARADA_MS (0 por encima), con v la
+# velocidad ordenada al seguidor. Sin él, la evolución en C4 aprovechaba las
+# paradas para acercarse al guía en vez de detenerse.
+V_PARADA_MS = 0.05     # q_parada = 0 a partir de esta velocidad
+GUIA_QUIETO_MM = 4.0   # desplazamiento de la pelota por paso (~0,4 s):
+                       # 0,01 m/s, el umbral de parada del anexo B.1
+PASOS_QUIETO = 2       # pasos seguidos (~0,8 s > 0,5 s del anexo B.1)
+# Además, se resta P_PARADA por cada parada del guía terminada (el guía
+# vuelve a arrancar) en la que el seguidor no ha llegado a estar quieto
+# (v < V_QUIETO_MS durante PASOS_QUIETO pasos seguidos): la parada no
+# superada del anexo B.4, igual que P_CHOQUE con el choque.
+P_PARADA = 3.0
+V_QUIETO_MS = 0.01
 
 
-def _q_sep(sep):
+def _q_sep(sep, banda=SEP_BANDA_M):
     """1 dentro de la banda; baja en línea recta hasta 0 en la colisión y
     a 0,70 m. Fuera de la banda siempre hay pendiente hacia ella."""
-    cerca, lejos = SEP_BANDA_M
+    cerca, lejos = banda
     if sep < cerca:
         return max(0.0, (sep - SEP_CHOQUE_M) / (cerca - SEP_CHOQUE_M))
     if sep > lejos:
@@ -78,17 +93,62 @@ def sin_arranque(registro):
     return PASOS_ARRANQUE if movido < ARRANQUE_M else None
 
 
-def calidad(registro, n_max):
+def guia_parado(registro):
+    """Lista de bool, uno por paso: el guía está parado (la pelota no se ha
+    desplazado más de GUIA_QUIETO_MM en los últimos PASOS_QUIETO pasos). La
+    espera inicial, antes de que el guía se mueva por primera vez, no es una
+    parada: el guía no arranca hasta que el seguidor se acerca."""
+    parado, quietos, arrancado, prev = [], 0, False, None
+    for info in registro:
+        p = info.get('pelota_sim')
+        if p is None or prev is None:
+            quietos = 0
+        elif math.hypot(p[0] - prev[0], p[1] - prev[1]) < GUIA_QUIETO_MM:
+            quietos += 1
+        else:
+            quietos, arrancado = 0, True
+        prev = p
+        parado.append(arrancado and quietos >= PASOS_QUIETO)
+    return parado
+
+
+def paradas_no_superadas(registro, parado):
+    """Número de paradas del guía terminadas en el registro (tramos de
+    `parado` seguidos de un paso con el guía en marcha) en las que el
+    seguidor no estuvo quieto PASOS_QUIETO pasos seguidos."""
+    n, en_parada, detenido, quietos = 0, False, False, 0
+    for info, guia_quieto in zip(registro, parado):
+        if guia_quieto:
+            en_parada = True
+            quietos = quietos + 1 if abs(info.get('v', 0.0)) < V_QUIETO_MS \
+                else 0
+            detenido = detenido or quietos >= PASOS_QUIETO
+        elif en_parada:
+            n += not detenido
+            en_parada, detenido, quietos = False, False, 0
+    return n
+
+
+def calidad(registro, n_max, banda=None, parada=False):
     """Calidad del episodio a partir de los info de cada paso.
 
     Un paso cuenta como vivo si en él no se ha producido ningún fallo
     (choque, perdido o atascado): el paso del fallo ya no suma.
+
+    `banda` (cerca, lejos) en metros sustituye a SEP_BANDA_M. Lo usa la
+    evolución de C4 desde cero (calidad_banda_m en su entorno.json): con
+    0,30-0,45 m el seguidor no puntúa al máximo pegado a 0,25 m, donde la
+    pelota empieza a salirse de la imagen por abajo (unos 0,23 m).
+
+    `parada` activa el término de parada (calidad_parada en entorno.json).
     """
+    banda = tuple(banda) if banda is not None else SEP_BANDA_M
     corte = sin_arranque(registro)
     if corte is not None:
         registro = registro[:corte]
+    parado = guia_parado(registro) if parada else [False] * len(registro)
     suma = 0.0
-    for info in registro:
+    for info, guia_quieto in zip(registro, parado):
         if info.get('choque') or info.get('perdido') or info.get('atascado'):
             continue
 
@@ -98,12 +158,17 @@ def calidad(registro, n_max):
                 'El paso no tiene separación real. ¿Está el puente lanzado '
                 "con modules:=\"['blob','sim']\" y se lee la pose del guía?")
 
-        q_sep = _q_sep(sep)
+        q_sep = _q_sep(sep, banda)
         q_x = _q_x(float(info['x'])) if info.get('visible') else 0.0
 
-        suma += K_VIVO + K_SEP * q_sep + K_X * q_x
+        r = K_VIVO + K_SEP * q_sep + K_X * q_x
+        if guia_quieto:
+            r *= max(0.0, 1.0 - abs(info.get('v', 0.0)) / V_PARADA_MS)
+        suma += r
 
     q = 100.0 * suma / n_max
+    if parada:
+        q -= P_PARADA * paradas_no_superadas(registro, parado)
 
     # Choque con el guía, atasco contra el entorno o guía sin arrancar
     if corte is not None or (registro and (registro[-1].get('choque')
