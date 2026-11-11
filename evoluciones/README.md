@@ -52,17 +52,34 @@ Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
 | `inc_s2c_w40_c4/` | Continuación de `inc_s2c_w40` desde `chk/p2-40` | 40-59 | 300 | 30 | 1 | 0,25-0,45 m |
 | `inc_s2c_w40_c4e2/` | Continuación de la anterior desde `chk/p2-60` | preparada, sin lanzar | 300 | 30 | 2 | 0,25-0,45 m |
 | `dir_c4_s5/` | Desde cero, semilla 5 (`config_c4_dir.json`) | 0-34 | 200 | 20 | 2 | 0,30-0,45 m |
-| `dir_c4p_s6/`, `dir_c4p_s7/` | Desde cero, semillas 6 y 7, con el término de parada (`config_c4_parada.json`) | 0-34 | 200 | 20 | 2 | 0,30-0,45 m |
-| `dir_c4_s5_c3/` | Continuación de la anterior desde `chk/p2-35`, con el guía en C3 (sin paradas), para un controlador único C1-C4 | 35-, preparada | 200 | 20 | 2 | 0,30-0,45 m |
+| `dir_c4p_s6/` | Desde cero, semilla 6, con el término de parada y la penalización (`config_c4_parada.json`) | 0-16, detenida: no aprende | 200 | 20 | 2 | 0,30-0,45 m |
+| `dir_c4f_s6/`, `dir_c4f_s7/` | Desde cero, semillas 6 y 7, configuración final (`config_c4_final.json`) | 0-34 | 200 | 20 | 2 | 0,30-0,45 m |
+| `dir_c4_s5_c3/` | Continuación de `dir_c4_s5` desde `chk/p2-35`, con el guía en C3 (sin paradas), para un controlador único C1-C4 | 35-, preparada, sin lanzar | 200 | 20 | 2 | 0,30-0,45 m |
 
 - `dir_c4_s5` usa una segunda formulación de la calidad: la banda en la que la
   separación puntúa al máximo empieza en 0,30 m, porque a unos 0,23 m la pelota
   se sale de la imagen por abajo.
-- `dir_c4p_s6` y `dir_c4p_s7` usan una tercera formulación: además, con el
-  guía parado la puntuación del paso se multiplica por 1 − v/0,05 (0 a partir
-  de 0,05 m/s) y se restan 3 puntos por cada parada en la que el seguidor
-  no llega a estar quieto (v < 0,01 m/s durante 2 pasos). Con la calidad de `dir_c4_s5`, la evolución aprovechaba las
-  paradas para acercarse al guía en lugar de detenerse.
+- `dir_c4p_s6` usa una tercera formulación: además, con el guía parado la
+  puntuación del paso se multiplica por 1 − |v|/0,05 (0 a partir de
+  0,05 m/s) y se restan 3 puntos por cada parada en la que el seguidor no
+  llega a estar quieto (v < 0,01 m/s durante 2 pasos). Con la calidad de
+  `dir_c4_s5`, la evolución aprovechaba las paradas para acercarse al guía en
+  lugar de detenerse. No aprendió: en la generación 16 la mejor calidad era
+  15 (74 en la semilla 5) y los episodios duraban unos 22 pasos de media.
+  Con v ≥ 0, la salida tanh nunca da v = 0 exacta, así que pararse era
+  imposible y la penalización castigaba a todos por igual. Consola en
+  `../consola_dir_c4p_s6.log`.
+- `dir_c4f_s6` y `dir_c4f_s7` (configuración final) cambian tres cosas
+  respecto a `dir_c4_s5`:
+  - `v_min` = −0,05 m/s con `v_sin_marcha_atras`: la v negativa se recorta
+    a 0, así que toda salida por debajo de −0,71 da v = 0. Existe una
+    distancia de equilibrio a la que el seguidor se detiene sin saturar la
+    tanh, y nunca retrocede.
+  - `obs_memoria`: sin pelota en la imagen, la entrada de tamaño conserva el
+    último valor visto en lugar de 0, que la red leía como "muy lejos" y
+    aceleraba (fallo del 557 en C3 y del 474 en C4).
+  - Término de parada de `dir_c4p_s6` sin la penalización
+    (`calidad_penalizacion: false`): solo el factor 1 − |v|/0,05.
 - Con 2 episodios por individuo, la calidad es la media de los dos
   (`episodios_individuo.txt` en la carpeta).
 - La consola de `dir_c4_s5` está en `../consola_dir_c4_s5.log`.

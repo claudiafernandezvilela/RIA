@@ -647,6 +647,12 @@ class RoboboSeguirEnv(gym.Env):
 
         # 1. Reescalar y publicar
         v = c['v_min'] + (accion[0] + 1.0) * 0.5 * (c['v_max'] - c['v_min'])
+        if c.get('v_sin_marcha_atras', False):
+            # Con v_min < 0, el tramo de la salida que daría marcha atrás
+            # se recorta a v = 0: el seguidor puede detenerse sin saturar
+            # la tanh (v = 0 por debajo de a = -1 + 2·|v_min|/(v_max - v_min))
+            # y nunca retrocede.
+            v = max(0.0, v)
         w = float(accion[1]) * c['w_max']
         self._publicar_velocidad(v, w)
 

@@ -129,7 +129,7 @@ def paradas_no_superadas(registro, parado):
     return n
 
 
-def calidad(registro, n_max, banda=None, parada=False):
+def calidad(registro, n_max, banda=None, parada=False, penalizacion=True):
     """Calidad del episodio a partir de los info de cada paso.
 
     Un paso cuenta como vivo si en él no se ha producido ningún fallo
@@ -141,6 +141,8 @@ def calidad(registro, n_max, banda=None, parada=False):
     pelota empieza a salirse de la imagen por abajo (unos 0,23 m).
 
     `parada` activa el término de parada (calidad_parada en entorno.json).
+    `penalizacion` = False quita la resta de P_PARADA por parada no
+    superada y deja solo el factor (calidad_penalizacion en entorno.json).
     """
     banda = tuple(banda) if banda is not None else SEP_BANDA_M
     corte = sin_arranque(registro)
@@ -167,7 +169,7 @@ def calidad(registro, n_max, banda=None, parada=False):
         suma += r
 
     q = 100.0 * suma / n_max
-    if parada:
+    if parada and penalizacion:
         q -= P_PARADA * paradas_no_superadas(registro, parado)
 
     # Choque con el guía, atasco contra el entorno o guía sin arrancar

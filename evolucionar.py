@@ -176,7 +176,8 @@ def desenlace(registro):
     return 'completo'
 
 
-def hacer_eval_genomes(env, n_max, episodios=1, banda=None, parada=False):
+def hacer_eval_genomes(env, n_max, episodios=1, banda=None, parada=False,
+                       penalizacion=True):
     """Función de evaluación que se pasa a Population.run(). Cada individuo
     se evalúa en `episodios` episodios y su calidad es la media: con las
     paradas aleatorias de C4, un solo episodio premia al que tuvo suerte.
@@ -192,7 +193,8 @@ def hacer_eval_genomes(env, n_max, episodios=1, banda=None, parada=False):
             cals, pasos, finales = [], [], []
             for _ in range(episodios):
                 registro = evaluar_genoma(env, red, n_max)
-                cals.append(calidad(registro, n_max, banda, parada))
+                cals.append(calidad(registro, n_max, banda, parada,
+                                    penalizacion))
                 pasos.append(str(len(registro)))
                 finales.append(desenlace(registro))
             genoma.fitness = statistics.mean(cals)
@@ -352,7 +354,9 @@ def main():
           'generaciones: {} -> {}\n'.format(
               args.guia, args.pasos_max, args.episodios_individuo,
               cfg.get('calidad_banda_m', '0.25-0.45 (por defecto)'),
-              'sí' if cfg.get('calidad_parada') else 'no',
+              ('no' if not cfg.get('calidad_parada') else
+               'sí, con penalización' if cfg.get('calidad_penalizacion', True)
+               else 'sí, solo el factor'),
               poblacion.generation, args.generaciones))
 
     env = RoboboSeguirEnv(pasos_max=args.pasos_max, usar_simulador=True,
@@ -361,7 +365,8 @@ def main():
         mejor = poblacion.run(
             hacer_eval_genomes(env, args.pasos_max, args.episodios_individuo,
                                cfg.get('calidad_banda_m'),
-                               bool(cfg.get('calidad_parada'))),
+                               bool(cfg.get('calidad_parada')),
+                               bool(cfg.get('calidad_penalizacion', True))),
             faltan)
         with open(os.path.join(carpeta, 'mejor_genoma.pkl'), 'wb') as f:
             pickle.dump(mejor, f)
