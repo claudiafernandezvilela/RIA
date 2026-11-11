@@ -712,3 +712,20 @@ Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4p_s6/chk/p2-19
   individuo 18/20  id   347  calidad   10.3  pasos 30+35/200  perdido+perdido  29.0 s
   individuo 19/20  id   348  calidad    7.2  pasos 25+23/200  perdido+perdido  23.0 s
   individuo 20/20  id   349  calidad    2.4  pasos 9+8/200  perdido+perdido  10.8 s
+Population's average fitness: 7.89381 stdev: 6.12155
+Best fitness: 28.44494 - size: (3, 13) - species 9 - id 331
+Average adjusted fitness: 0.280
+Mean genetic distance 0.730, standard deviation 0.503
+Population of 20 members in 2 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     9   13    13     28.445    0.357     2
+    10   13     7     10.461    0.203     1
+Total extinctions: 0
+Generation time: 506.194 sec (503.237 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4p_s6/chk/p2-20
+
+ ****** Running generation 20 ****** 
+
+  individuo  1/20  id   336  calidad   12.1  pasos 34+45/200  perdido+perdido  35.0 s
+  individuo  2/20  id   350  calidad    1.5  pasos 14+22/200  choque+perdido  18.6 s
