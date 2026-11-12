@@ -10,7 +10,7 @@ Primera implementación (semana 1): el guía circula a VELOCIDAD CONSTANTE
 (se configura en el simulador, p. ej. modo crucero con mínimo = máximo).
 
 Basado en el ejemplo RoboboParedEnv (p1_robobo_env.py original) y en los
-espacios definidos en espacios.txt.
+espacios definidos en p1/espacios.txt.
 
 --------------------------------------------------------------------
 REQUISITOS
@@ -140,7 +140,7 @@ class RoboboSeguirEnv(gym.Env):
     """Seguimiento del vehículo guía en la ciudad de RoboboSim.
 
     Observación (Box, float32, dimensión 5, o 6 con obs_delta) — según
-    espacios.txt
+    p1/espacios.txt
         [0]  visible: 1 si el detector ve el blob verde, 0 si no
         [1]  x del blob, centrada y normalizada, en [-1, 1]
         [2]  tamaño del blob / S_max, recortado, en [0, 1]
@@ -165,9 +165,9 @@ class RoboboSeguirEnv(gym.Env):
         [1]  velocidad angular, en [-1, 1], reescalada a [-W_MAX, W_MAX]
         Se publica como Twist en base/cmd_vel.
 
-    Recompensa — en _recompensa(), con los cuatro términos de espacios.txt.
+    Recompensa — en _recompensa(), con los cuatro términos de p1/espacios.txt.
 
-    Fin de episodio (espacios.txt, "Reinicio aprendizaje")
+    Fin de episodio (p1/espacios.txt, "Reinicio aprendizaje")
         terminated: con simulador, criterios del anexo B con la separación
                     real (colisión < sep_colision_m; guía perdido si
                     separación > sep_perdido_m o pelota sin ver durante
@@ -519,7 +519,7 @@ class RoboboSeguirEnv(gym.Env):
 
     def _recompensa(self, visible, x, s, choque, perdido, cambio_accion,
                     sep=None):
-        """Los cuatro términos de espacios.txt más uno de suavidad.
+        """Los cuatro términos de p1/espacios.txt más uno de suavidad.
         Coeficientes iniciales, a ajustar experimentalmente (y a declarar
         en la memoria).
 

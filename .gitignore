@@ -8,7 +8,7 @@ __pycache__/
 *.zip
 
 # ── Logs de entrenamiento ───────────────
-# Los monitores (p1_logs/*.monitor.csv) SÍ se versionan: son las
+# Los monitores (p1/p1_logs/*.monitor.csv) SÍ se versionan: son las
 # evidencias de las curvas de aprendizaje (apartado 8.2).
 
 # TensorBoard

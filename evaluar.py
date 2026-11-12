@@ -78,7 +78,7 @@ import time
 import numpy as np
 
 
-RUTA_EVAL = 'p1_eval'
+RUTA_EVAL = 'p2_eval'
 CONFIGS = ('c1', 'c2', 'c3', 'c4')
 DESENLACES = ('completado', 'colisión', 'guía perdido', 'otra causa')
 
@@ -545,7 +545,7 @@ def main():
                    help='ejecuciones de 120 s en esta configuración')
     p.add_argument('--carpeta', default=RUTA_EVAL,
                    help='carpeta de los registros y las métricas '
-                        '(p1_eval; p2_eval para la P2)')
+                        '(p2_eval; los de la P1 están en p1/p1_eval)')
     p.add_argument('--detalle', action='store_true',
                    help='imprime una línea por paso')
     args = p.parse_args()

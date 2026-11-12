@@ -17,7 +17,7 @@ from docx.oxml.ns import qn
 from docx.shared import Pt, RGBColor, Cm
 
 DIR = os.path.dirname(os.path.abspath(__file__))
-PLANTILLA = os.path.join(DIR, 'RIA_P1_Memoria.docx')
+PLANTILLA = os.path.join(DIR, '..', 'p1', 'memoria', 'RIA_P1_Memoria.docx')
 SALIDA = os.path.join(DIR, 'RIA_P2_Memoria.docx')
 FIGURAS = os.path.join(DIR, '..', 'figuras')
 

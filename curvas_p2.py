@@ -53,7 +53,7 @@ from matplotlib.ticker import FuncFormatter, MaxNLocator
 RUTA_EVOLUCIONES = 'evoluciones'
 SEGUNDOS_POR_PASO = 0.37        # medido en las evoluciones de C1
 
-# Los mismos colores que curvas.py: grises y un único acento azul
+# Los mismos colores que p1/curvas.py: grises y un único acento azul
 ACENTO = '#2a6fdb'
 GRIS_SERIE = '#9aa0a6'
 GRIS_REF = '#5f6368'
