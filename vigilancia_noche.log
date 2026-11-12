@@ -1,0 +1,26 @@
+[23:31:49] Vigilancia iniciada: dir_c4f_s6 hasta la generación 24, luego dir_c4f_s8.
+[23:31:49] En marcha: dir_c4f_s6 gen. 13, dir_c4f_s8 gen. -1.
+[00:00:48] Vigilancia iniciada: dir_c4f_s6 hasta la generación 24, luego dir_c4f_s8.
+[00:00:48] dir_c4f_s6 parada en la generación 13: reanudo (1/10).
+[00:02:47] Vigilancia iniciada: dir_c4f_s6 hasta la generación 24, luego dir_c4f_s8.
+[00:02:47] dir_c4f_s6 parada en la generación 13: reanudo (1/10).
+[00:07:47] Vigilancia iniciada: dir_c4f_s6 hasta la generación 24, luego dir_c4f_s8.
+[00:07:48] En marcha: dir_c4f_s6 gen. 13, dir_c4f_s8 gen. -1.
+[00:37:48] En marcha: dir_c4f_s6 gen. 15, dir_c4f_s8 gen. -1.
+[01:07:48] En marcha: dir_c4f_s6 gen. 16, dir_c4f_s8 gen. -1.
+[01:37:48] En marcha: dir_c4f_s6 gen. 17, dir_c4f_s8 gen. -1.
+[02:07:48] En marcha: dir_c4f_s6 gen. 18, dir_c4f_s8 gen. -1.
+[02:37:48] En marcha: dir_c4f_s6 gen. 19, dir_c4f_s8 gen. -1.
+[03:07:48] En marcha: dir_c4f_s6 gen. 20, dir_c4f_s8 gen. -1.
+[03:37:49] En marcha: dir_c4f_s6 gen. 21, dir_c4f_s8 gen. -1.
+[04:07:49] En marcha: dir_c4f_s6 gen. 22, dir_c4f_s8 gen. -1.
+[04:37:49] En marcha: dir_c4f_s6 gen. 23, dir_c4f_s8 gen. -1.
+[05:07:49] dir_c4f_s6 terminada. Lanzo dir_c4f_s8 (semilla 8) desde cero (1/10).
+[05:37:49] En marcha: dir_c4f_s6 gen. 24, dir_c4f_s8 gen. 4.
+[06:07:49] En marcha: dir_c4f_s6 gen. 24, dir_c4f_s8 gen. 7.
+[06:37:50] En marcha: dir_c4f_s6 gen. 24, dir_c4f_s8 gen. 10.
+[07:07:50] En marcha: dir_c4f_s6 gen. 24, dir_c4f_s8 gen. 12.
+[07:37:50] En marcha: dir_c4f_s6 gen. 24, dir_c4f_s8 gen. 15.
+[08:07:50] En marcha: dir_c4f_s6 gen. 24, dir_c4f_s8 gen. 18.
+[08:37:50] En marcha: dir_c4f_s6 gen. 24, dir_c4f_s8 gen. 21.
+[09:07:50] dir_c4f_s6 y dir_c4f_s8 terminadas. Fin de la vigilancia.

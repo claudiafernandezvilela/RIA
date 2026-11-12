@@ -3,6 +3,29 @@
 Protocolo del anexo B: episodios de 120 s con la red determinista y los
 criterios de fallo del anexo B.3. 3 episodios por configuración.
 
+RoboboSim tiene que estar en primer plano durante la evaluación: con el
+ordenador desatendido el simulador se comporta distinto y los resultados no
+son válidos (ver [`../evoluciones/README.md`](../evoluciones/README.md)).
+
+## Controlador final: id 437 (semilla 6, configuración final)
+
+Genoma: `evoluciones/dir_c4f_s6/genomas/mejor_gen024.pkl`, evolucionado desde
+cero en C4 con `config_c4_final.json`.
+Registros: [`semilla6_c4f_id437/`](semilla6_c4f_id437/) (C1-C3) y
+[`c4/c4f_s6_id437/`](c4/c4f_s6_id437/) (C4).
+
+| Configuración | Completa | En banda 0,20-0,45 m | Separación media | Separación mínima | Pelota visible |
+|---|---|---|---|---|---|
+| C1 (Crucero 10-10) | 3/3 | 99 % | 0,35 m | 0,28 m | 100 % |
+| C2 (Crucero 10-40) | 3/3 | 48-50 % | 0,42-0,43 m | 0,30 m | 100 % |
+| C3 (Variable 10-40) | 3/3 | 68-75 % | 0,41-0,42 m | 0,30 m | 99-100 % |
+| C4 (con paradas) | 3/3 | 70-72 % | 0,41 m | 0,25 m | 100 % |
+
+Un único controlador para C1-C4, sin colisión ni pérdida del guía en los 12
+episodios. En C4 supera 11 de 18 paradas del guía; en 2 no llega a quedar
+quieto y las otras 5 ocurren al final del episodio, sin los 10 s de margen
+para comprobarlas. Iguala o mejora al 1038 en C1-C3.
+
 ## Semilla 2: id 1038
 
 Genoma: `evoluciones/inc_s2c_w40/genomas/mejor_gen039.pkl`.
@@ -40,9 +63,10 @@ avanzando hasta chocar o perderla.
 
 ## C4
 
-Controlador evolucionado desde cero en C4 (`evoluciones/dir_c4_s5`): id 557,
-3/3 episodios completados, 50,5 % en banda y separación media 0,45 m.
-Detalle y resto de candidatos en [`c4/`](c4/README.md).
+El 437 (arriba) completa 3/3 con 70,7 % en banda. Antes de la configuración
+final, el mejor era el 557 (`evoluciones/dir_c4_s5`): 3/3, 50,5 % en banda,
+pero solo supera 6 de 23 paradas. Detalle y resto de candidatos en
+[`c4/`](c4/README.md).
 
 ## Pruebas descartadas
 
