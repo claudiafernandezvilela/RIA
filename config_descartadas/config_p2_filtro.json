@@ -1,4 +1,0 @@
-{
-  "_comentario": "P2, filtro del tamaño: se aplica con evaluar.py --config-json encima del entorno.json de la evolución. El tamaño de la observación baja como mucho 0,1 por paso: a unos 0,25 m o menos el blob medido encoge aunque el robot se acerque, la red lo lee como que el guía se aleja y acelera.",
-  "obs_caida_max": 0.1
-}

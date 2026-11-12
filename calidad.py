@@ -7,7 +7,7 @@ de diccionarios `info` que devuelve RoboboSeguirEnv.step(), uno por paso.
 La red no recibe nunca la calidad; sólo sirve para comparar individuos, así
 que puede usar información privilegiada del simulador (apartado 5).
 
-Formulación mixta (ver calidad_p2.md). Por cada paso vivo
+Formulación mixta. Por cada paso vivo
 
     r_t = K_VIVO + K_SEP * q_sep + K_X * q_x
 

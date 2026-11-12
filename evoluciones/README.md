@@ -7,6 +7,7 @@ El resto de pruebas está en [`_descartadas/`](_descartadas/README.md).
 | Semilla | Carpeta | Controlador | Estado |
 |---|---|---|---|
 | 6 | `dir_c4f_s6/` | **id 437** (`genomas/mejor_gen024.pkl`), controlador final | Configuración final, evolucionada en C4. Terminada y evaluada: 12/12 episodios en C1-C4 |
+| 7 | `dir_c4f_s7/` | id 276 (`genomas/mejor_gen024.pkl`), candidato | Configuración final. Generaciones 0-24; el 276 completa 3/3 en C1 y C2 (C3 y C4 pendientes) |
 | 8 | `dir_c4f_s8/` | ninguno | Configuración final, segunda semilla. Generaciones 0-24 hechas; no aprendió (mejor 15, media 9 en la última) |
 | 2 | `inc_s2c_w40/` | id 1038 (`genomas/mejor_gen039.pkl`) | Terminada y evaluada: 9/9 episodios en C1-C3, 0/2 en C4 |
 | 3 | `inc_s3c/` | pendiente | Generaciones 0-39 hechas. El mejor final, id 971, completa 1/9 |
@@ -53,14 +54,13 @@ Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
 | Carpeta | Origen | Generaciones | Pasos | Población | Episodios por individuo | Banda de la calidad |
 |---|---|---|---|---|---|---|
 | `inc_s2c_w40_c4/` | Continuación de `inc_s2c_w40` desde `chk/p2-40` | 40-59 | 300 | 30 | 1 | 0,25-0,45 m |
-| `inc_s2c_w40_c4e2/` | Continuación de la anterior desde `chk/p2-60` | preparada, sin lanzar | 300 | 30 | 2 | 0,25-0,45 m |
 | `dir_c4_s5/` | Desde cero, semilla 5 (`config_c4_dir.json`) | 0-34 | 200 | 20 | 2 | 0,30-0,45 m |
 | `dir_c4p_s6/` | Desde cero, semilla 6, con el término de parada y la penalización (`config_c4_parada.json`) | 0-16, detenida: no aprende | 200 | 20 | 2 | 0,30-0,45 m |
 | `dir_c4p_s7/` | Igual, semilla 7 | 0-24 | 200 | 20 | 2 | 0,30-0,45 m |
 | `dir_c4f_s6/` | Desde cero, semilla 6, configuración final (`config_c4_final.json`) | 0-24 | 200 | 20 | 2 | 0,30-0,45 m |
+| `dir_c4f_s7/` | Igual, semilla 7 | 0-24 | 200 | 20 | 2 | 0,30-0,45 m |
 | `dir_c4f_s8/` | Igual, semilla 8 | 0-24 | 200 | 20 | 2 | 0,30-0,45 m |
 | `dir_c4f_s9/` | Igual, semilla 9 | en marcha (25 generaciones) | 200 | 20 | 2 | 0,30-0,45 m |
-| `dir_c4_s5_c3/` | Continuación de `dir_c4_s5` desde `chk/p2-35`, con el guía en C3 (sin paradas), para un controlador único C1-C4 | 35-, preparada, sin lanzar | 200 | 20 | 2 | 0,30-0,45 m |
 
 - `dir_c4_s5` usa una segunda formulación de la calidad: la banda en la que la
   separación puntúa al máximo empieza en 0,30 m, porque a unos 0,23 m la pelota
@@ -79,7 +79,7 @@ Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
   20-24, frente a 13-18), pero sus mejores (293 en la generación 15, 394 en
   la 21, 431 en la 23) bajan a 12-19 al reevaluarlos en la generación
   siguiente. Consola en `../consola_dir_c4p_s7.log`.
-- `dir_c4f_s6` y `dir_c4f_s8` (configuración final) cambian tres cosas
+- `dir_c4f_s6` a `dir_c4f_s9` (configuración final) cambian tres cosas
   respecto a `dir_c4_s5`:
   - `v_min` = −0,05 m/s con `v_sin_marcha_atras`: la v negativa se recorta
     a 0, así que toda salida por debajo de −0,71 da v = 0. Existe una
@@ -98,10 +98,6 @@ Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
   - Se interrumpió en la generación 14 y se reanudó desde `chk/p2-14`.
     `chk_descartado/p2-15` es el punto de control de un intento fallido de
     esa reanudación (el simulador no respondía bien); no se usa.
-  - Las generaciones 14-24 se ejecutaron de noche con `../vigilar_noche.sh`,
-    que reanuda la evolución si se para o se cuelga y después lanza
-    `dir_c4f_s8` (registro en `../vigilancia_noche.log`). No hizo falta
-    reanudar nada.
   - Consolas en `../consola_dir_c4f_s6.log` y `../consola_dir_c4f_s8.log`.
 - RoboboSim tiene que estar en primer plano. Con el ordenador desatendido
   (ventana en segundo plano o pantalla apagada) el simulador se comporta

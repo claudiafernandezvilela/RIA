@@ -30,3 +30,6 @@ env/
 # NEAT
 __pycache__/
 .DS_Store
+
+# Ficheros temporales de Word
+~$*
