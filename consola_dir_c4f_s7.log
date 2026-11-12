@@ -1,0 +1,915 @@
+Evolución nueva dir_c4f_s7 (semilla 7)
+Guía: c4   episodio: 200 pasos   episodios por individuo: 2   banda de la calidad: [0.3, 0.45] m   término de parada: sí, solo el factor   generaciones: 0 -> 25
+
+Connecting to SIM
+wait
+### connection established ###
+
+ ****** Running generation 0 ****** 
+
+  individuo  1/20  id     1  calidad    3.0  pasos 9+13/200  perdido+perdido  11.5 s
+  individuo  2/20  id     2  calidad   -2.5  pasos 7+12/200  choque+perdido   9.8 s
+  individuo  3/20  id     3  calidad    3.3  pasos 13+13/200  perdido+perdido  12.8 s
+  individuo  4/20  id     4  calidad    2.2  pasos 8+9/200  perdido+perdido  10.2 s
+  individuo  5/20  id     5  calidad    2.5  pasos 10+10/200  perdido+perdido  10.8 s
+  individuo  6/20  id     6  calidad   -4.7  pasos 25+25/200  quieto+quieto  22.4 s
+  individuo  7/20  id     7  calidad    2.7  pasos 10+10/200  perdido+perdido  11.4 s
+  individuo  8/20  id     8  calidad    3.1  pasos 9+9/200  perdido+perdido   9.4 s
+  individuo  9/20  id     9  calidad    2.5  pasos 11+9/200  perdido+perdido  11.0 s
+  individuo 10/20  id    10  calidad    2.1  pasos 9+9/200  perdido+perdido  10.4 s
+  individuo 11/20  id    11  calidad   -9.0  pasos 4+4/200  choque+choque   6.8 s
+  individuo 12/20  id    12  calidad    4.9  pasos 10+20/200  perdido+perdido  14.0 s
+  individuo 13/20  id    13  calidad    2.4  pasos 9+9/200  perdido+perdido  10.4 s
+  individuo 14/20  id    14  calidad    2.0  pasos 9+10/200  perdido+perdido  10.6 s
+  individuo 15/20  id    15  calidad    2.7  pasos 8+9/200  perdido+perdido   9.4 s
+  individuo 16/20  id    16  calidad    3.1  pasos 10+10/200  perdido+perdido  11.2 s
+  individuo 17/20  id    17  calidad   -1.5  pasos 17+6/200  perdido+choque  11.2 s
+  individuo 18/20  id    18  calidad    3.0  pasos 9+9/200  perdido+perdido  10.0 s
+  individuo 19/20  id    19  calidad    3.0  pasos 9+9/200  perdido+perdido   9.4 s
+  individuo 20/20  id    20  calidad    2.9  pasos 9+9/200  perdido+perdido  10.4 s
+Population's average fitness: 1.38963 stdev: 3.23641
+Best fitness: 4.94751 - size: (2, 12) - species 1 - id 12
+Average adjusted fitness: 0.746
+Mean genetic distance 0.272, standard deviation 0.158
+Population of 20 members in 1 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    0    20      4.948    0.746     0
+Total extinctions: 0
+Generation time: 223.087 sec
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-1
+
+ ****** Running generation 1 ****** 
+
+  individuo  1/20  id    12  calidad    2.7  pasos 9+9/200  perdido+perdido  10.0 s
+  individuo  2/20  id    21  calidad    3.4  pasos 13+11/200  perdido+perdido  11.6 s
+  individuo  3/20  id    22  calidad    3.3  pasos 11+10/200  perdido+perdido  10.6 s
+  individuo  4/20  id    23  calidad    3.4  pasos 11+9/200  perdido+perdido  10.8 s
+  individuo  5/20  id    24  calidad    2.8  pasos 9+9/200  perdido+perdido  10.2 s
+  individuo  6/20  id    25  calidad    2.8  pasos 9+9/200  perdido+perdido  10.0 s
+  individuo  7/20  id    26  calidad   -4.6  pasos 25+25/200  quieto+quieto  22.2 s
+  individuo  8/20  id    27  calidad    4.0  pasos 8+15/200  perdido+perdido  11.4 s
+  individuo  9/20  id    28  calidad    3.2  pasos 13+10/200  perdido+perdido  11.8 s
+  individuo 10/20  id    29  calidad    3.8  pasos 11+11/200  perdido+perdido  11.0 s
+  individuo 11/20  id    30  calidad    3.0  pasos 10+10/200  perdido+perdido  11.0 s
+  individuo 12/20  id    31  calidad    6.1  pasos 9+26/200  perdido+perdido  16.2 s
+  individuo 13/20  id    32  calidad   -1.6  pasos 14+12/200  perdido+choque  13.6 s
+  individuo 14/20  id    33  calidad    1.2  pasos 10+9/200  perdido+perdido  10.6 s
+  individuo 15/20  id    34  calidad    4.1  pasos 11+13/200  perdido+perdido  13.0 s
+  individuo 16/20  id    35  calidad    2.8  pasos 10+11/200  perdido+perdido  10.8 s
+  individuo 17/20  id    36  calidad    3.9  pasos 12+11/200  perdido+perdido  11.8 s
+  individuo 18/20  id    37  calidad    2.6  pasos 9+9/200  perdido+perdido   9.6 s
+  individuo 19/20  id    38  calidad    2.4  pasos 8+9/200  perdido+perdido  10.2 s
+  individuo 20/20  id    39  calidad    2.8  pasos 9+8/200  perdido+perdido   9.6 s
+Population's average fitness: 2.60100 stdev: 2.14799
+Best fitness: 6.05623 - size: (3, 13) - species 1 - id 31
+Average adjusted fitness: 0.675
+Mean genetic distance 0.489, standard deviation 0.274
+Population of 20 members in 2 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    1    17      6.056    0.675     0
+     3    0     3         --       --     0
+Total extinctions: 0
+Generation time: 235.987 sec (229.537 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-2
+
+ ****** Running generation 2 ****** 
+
+  individuo  1/20  id    31  calidad   -2.4  pasos 11+7/200  perdido+choque  10.0 s
+  individuo  2/20  id    40  calidad    2.6  pasos 9+8/200  perdido+perdido   9.6 s
+  individuo  3/20  id    41  calidad    3.6  pasos 9+14/200  perdido+perdido  11.8 s
+  individuo  4/20  id    42  calidad    4.9  pasos 18+9/200  perdido+perdido  13.2 s
+  individuo  5/20  id    43  calidad    2.8  pasos 10+8/200  perdido+perdido   9.4 s
+  individuo  6/20  id    44  calidad    3.7  pasos 13+14/200  perdido+perdido  14.2 s
+  individuo  7/20  id    45  calidad    3.2  pasos 9+10/200  perdido+perdido  10.4 s
+  individuo  8/20  id    46  calidad    2.5  pasos 9+9/200  perdido+perdido  10.4 s
+  individuo  9/20  id    47  calidad    2.9  pasos 9+9/200  perdido+perdido  10.2 s
+  individuo 10/20  id    48  calidad    6.3  pasos 17+20/200  perdido+perdido  16.6 s
+  individuo 11/20  id    49  calidad    4.2  pasos 17+12/200  perdido+perdido  15.0 s
+  individuo 12/20  id    50  calidad    7.1  pasos 18+21/200  perdido+perdido  17.2 s
+  individuo 13/20  id    51  calidad    3.4  pasos 10+16/200  perdido+perdido  12.6 s
+  individuo 14/20  id    52  calidad    5.4  pasos 19+15/200  perdido+perdido  15.8 s
+  individuo 15/20  id    53  calidad    3.1  pasos 9+9/200  perdido+perdido  10.0 s
+  individuo 16/20  id    54  calidad   -0.7  pasos 17+10/200  choque+perdido  12.6 s
+  individuo 17/20  id    55  calidad    2.6  pasos 8+8/200  perdido+perdido   9.4 s
+  individuo 18/20  id    56  calidad   -5.5  pasos 7+16/200  choque+choque  12.0 s
+  individuo 19/20  id    57  calidad    3.2  pasos 10+10/200  perdido+perdido   9.8 s
+  individuo 20/20  id    58  calidad    9.9  pasos 59+10/200  perdido+perdido  29.2 s
+Population's average fitness: 3.14133 stdev: 3.19293
+Best fitness: 9.91156 - size: (3, 13) - species 3 - id 58
+Average adjusted fitness: 0.545
+Mean genetic distance 0.531, standard deviation 0.324
+Population of 20 members in 2 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    2    12      7.138    0.569     0
+     3    1     8      9.912    0.521     0
+Total extinctions: 0
+Generation time: 259.389 sec (239.488 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-3
+
+ ****** Running generation 3 ****** 
+
+  individuo  1/20  id    50  calidad    6.0  pasos 15+22/200  perdido+perdido  17.0 s
+  individuo  2/20  id    59  calidad    4.4  pasos 16+9/200  perdido+perdido  12.4 s
+  individuo  3/20  id    60  calidad    5.2  pasos 16+16/200  perdido+perdido  15.0 s
+  individuo  4/20  id    61  calidad    4.5  pasos 15+13/200  perdido+perdido  13.0 s
+  individuo  5/20  id    62  calidad    6.3  pasos 29+9/200  perdido+perdido  17.4 s
+  individuo  6/20  id    63  calidad    9.1  pasos 40+8/200  perdido+perdido  22.0 s
+  individuo  7/20  id    64  calidad    5.0  pasos 14+16/200  perdido+perdido  14.2 s
+  individuo  8/20  id    65  calidad    5.1  pasos 19+13/200  perdido+perdido  14.2 s
+  individuo  9/20  id    66  calidad    4.3  pasos 12+14/200  perdido+perdido  13.4 s
+  individuo 10/20  id    67  calidad   -1.8  pasos 8+13/200  choque+perdido  10.4 s
+  individuo 11/20  id    68  calidad   -1.0  pasos 11+16/200  perdido+choque  13.0 s
+  individuo 12/20  id    69  calidad    5.8  pasos 18+16/200  perdido+perdido  15.8 s
+  individuo 13/20  id    70  calidad   -6.6  pasos 12+9/200  choque+choque  10.8 s
+  individuo 14/20  id    71  calidad    5.1  pasos 14+15/200  perdido+perdido  13.0 s
+  individuo 15/20  id    58  calidad    6.8  pasos 9+28/200  perdido+perdido  16.0 s
+  individuo 16/20  id    72  calidad    3.7  pasos 10+38/200  choque+perdido  20.8 s
+  individuo 17/20  id    73  calidad    2.8  pasos 12+11/200  perdido+perdido  10.6 s
+  individuo 18/20  id    74  calidad    2.5  pasos 9+9/200  perdido+perdido  10.4 s
+  individuo 19/20  id    75  calidad    4.9  pasos 31+9/200  perdido+perdido  17.6 s
+  individuo 20/20  id    76  calidad    2.9  pasos 9+9/200  perdido+perdido  10.6 s
+Population's average fitness: 3.73841 stdev: 3.35841
+Best fitness: 9.05214 - size: (3, 13) - species 1 - id 63
+Average adjusted fitness: 0.642
+Mean genetic distance 0.598, standard deviation 0.349
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    3     6      9.052    0.735     0
+     3    2     9      6.771    0.549     1
+     6    0     5         --       --     0
+Total extinctions: 0
+Generation time: 287.583 sec (251.512 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-4
+
+ ****** Running generation 4 ****** 
+
+  individuo  1/20  id    58  calidad    9.8  pasos 17+38/200  perdido+perdido  22.8 s
+  individuo  2/20  id    77  calidad    2.4  pasos 9+9/200  perdido+perdido  10.2 s
+  individuo  3/20  id    78  calidad   12.0  pasos 25+36/200  perdido+perdido  25.2 s
+  individuo  4/20  id    79  calidad   -0.4  pasos 9+25/200  perdido+quieto  15.4 s
+  individuo  5/20  id    80  calidad   -3.1  pasos 10+6/200  perdido+choque  10.1 s
+  individuo  6/20  id    81  calidad    2.7  pasos 8+9/200  perdido+perdido   9.4 s
+  individuo  7/20  id    82  calidad    2.5  pasos 8+9/200  perdido+perdido  10.0 s
+  individuo  8/20  id    83  calidad    2.3  pasos 9+8/200  perdido+perdido  10.2 s
+  individuo  9/20  id    84  calidad   12.0  pasos 45+17/200  perdido+perdido  24.4 s
+  individuo 10/20  id    63  calidad    7.8  pasos 30+20/200  perdido+perdido  22.6 s
+  individuo 11/20  id    85  calidad    7.8  pasos 17+24/200  perdido+perdido  18.2 s
+  individuo 12/20  id    86  calidad    9.4  pasos 34+27/200  perdido+perdido  25.6 s
+  individuo 13/20  id    87  calidad    2.8  pasos 8+9/200  perdido+perdido   9.8 s
+  individuo 14/20  id    88  calidad    7.9  pasos 16+27/200  perdido+perdido  19.2 s
+  individuo 15/20  id    89  calidad    8.5  pasos 23+26/200  perdido+perdido  21.8 s
+  individuo 16/20  id    90  calidad    3.8  pasos 16+8/200  perdido+perdido  12.2 s
+  individuo 17/20  id    91  calidad    8.3  pasos 40+8/200  perdido+perdido  21.6 s
+  individuo 18/20  id    92  calidad    5.4  pasos 21+9/200  perdido+perdido  13.8 s
+  individuo 19/20  id    93  calidad    2.7  pasos 8+10/200  perdido+perdido  10.6 s
+  individuo 20/20  id    94  calidad    2.8  pasos 9+9/200  perdido+perdido  10.4 s
+Population's average fitness: 5.36459 stdev: 4.01681
+Best fitness: 12.04562 - size: (3, 13) - species 3 - id 84
+Average adjusted fitness: 0.577
+Mean genetic distance 0.708, standard deviation 0.412
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    4     7      9.446    0.526     0
+     3    3     7     12.046    0.500     0
+     6    1     6      8.469    0.705     0
+Total extinctions: 0
+Generation time: 323.584 sec (265.926 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-5
+
+ ****** Running generation 5 ****** 
+
+  individuo  1/20  id    89  calidad   12.0  pasos 43+20/200  perdido+perdido  27.4 s
+  individuo  2/20  id    95  calidad    6.0  pasos 20+17/200  perdido+perdido  18.2 s
+  individuo  3/20  id    96  calidad    4.7  pasos 18+9/200  perdido+perdido  12.6 s
+  individuo  4/20  id    97  calidad    5.9  pasos 9+27/200  perdido+perdido  17.0 s
+  individuo  5/20  id    98  calidad    4.4  pasos 35+17/200  choque+perdido  22.8 s
+  individuo  6/20  id    99  calidad    5.6  pasos 25+9/200  perdido+perdido  15.6 s
+  individuo  7/20  id    86  calidad    3.2  pasos 30+18/200  perdido+choque  21.2 s
+  individuo  8/20  id   100  calidad    3.0  pasos 9+10/200  perdido+perdido  10.8 s
+  individuo  9/20  id   101  calidad    7.3  pasos 10+33/200  perdido+perdido  19.2 s
+  individuo 10/20  id   102  calidad    7.3  pasos 24+19/200  perdido+perdido  19.8 s
+  individuo 11/20  id   103  calidad    3.2  pasos 10+10/200  perdido+perdido  11.2 s
+  individuo 12/20  id   104  calidad    7.8  pasos 23+30/200  perdido+perdido  23.2 s
+  individuo 13/20  id   105  calidad    6.2  pasos 15+24/200  perdido+perdido  17.4 s
+  individuo 14/20  id    84  calidad   21.2  pasos 51+52/200  perdido+perdido  39.8 s
+  individuo 15/20  id   106  calidad    9.8  pasos 31+39/200  perdido+perdido  28.0 s
+  individuo 16/20  id   107  calidad   23.7  pasos 62+50/200  perdido+perdido  42.0 s
+  individuo 17/20  id   108  calidad    2.9  pasos 9+9/200  perdido+perdido  10.0 s
+  individuo 18/20  id   109  calidad   28.8  pasos 75+78/200  perdido+perdido  56.4 s
+  individuo 19/20  id   110  calidad    5.8  pasos 20+18/200  perdido+perdido  17.2 s
+  individuo 20/20  id   111  calidad   22.8  pasos 61+75/200  perdido+choque  51.6 s
+Population's average fitness: 9.58071 stdev: 7.69162
+Best fitness: 28.77728 - size: (4, 14) - species 3 - id 109
+Average adjusted fitness: 0.252
+Mean genetic distance 0.665, standard deviation 0.392
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    5     7      7.318    0.078     1
+     3    4     8     28.777    0.522     0
+     6    2     5     11.955    0.157     0
+Total extinctions: 0
+Generation time: 481.394 sec (301.837 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-6
+
+ ****** Running generation 6 ****** 
+
+  individuo  1/20  id   102  calidad    3.9  pasos 15+11/200  perdido+perdido  12.8 s
+  individuo  2/20  id   112  calidad    8.3  pasos 23+19/200  perdido+perdido  18.6 s
+  individuo  3/20  id   113  calidad    4.1  pasos 18+9/200  perdido+perdido  13.0 s
+  individuo  4/20  id   114  calidad   -0.1  pasos 21+12/200  perdido+choque  15.4 s
+  individuo  5/20  id   115  calidad    2.9  pasos 9+11/200  perdido+perdido  10.0 s
+  individuo  6/20  id    89  calidad   14.1  pasos 39+29/200  perdido+perdido  27.2 s
+  individuo  7/20  id   116  calidad    2.7  pasos 9+9/200  perdido+perdido  10.6 s
+  individuo  8/20  id   117  calidad   13.3  pasos 50+40/200  perdido+perdido  34.8 s
+  individuo  9/20  id   118  calidad    3.3  pasos 13+11/200  perdido+perdido  12.8 s
+  individuo 10/20  id   119  calidad    7.0  pasos 27+25/200  perdido+perdido  22.4 s
+  individuo 11/20  id   109  calidad   14.3  pasos 35+48/200  perdido+perdido  34.0 s
+  individuo 12/20  id   120  calidad   18.2  pasos 49+49/200  perdido+perdido  40.0 s
+  individuo 13/20  id   121  calidad    5.3  pasos 14+16/200  perdido+perdido  15.4 s
+  individuo 14/20  id   122  calidad    9.9  pasos 57+21/200  choque+perdido  32.6 s
+  individuo 15/20  id   123  calidad   26.1  pasos 66+54/200  perdido+perdido  47.8 s
+  individuo 16/20  id   124  calidad   20.8  pasos 39+71/200  perdido+perdido  43.8 s
+  individuo 17/20  id   125  calidad    4.9  pasos 14+14/200  perdido+perdido  14.0 s
+  individuo 18/20  id   126  calidad   10.8  pasos 44+35/200  choque+perdido  31.6 s
+  individuo 19/20  id   127  calidad    8.3  pasos 55+16/200  choque+perdido  30.0 s
+  individuo 20/20  id   128  calidad    8.0  pasos 25+23/200  perdido+perdido  21.8 s
+Population's average fitness: 9.30130 stdev: 6.59080
+Best fitness: 26.07545 - size: (2, 11) - species 1 - id 123
+Average adjusted fitness: 0.352
+Mean genetic distance 0.674, standard deviation 0.384
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    6     6     26.075    0.296     0
+     3    5     8     20.788    0.445     1
+     6    3     6     14.133    0.314     0
+Total extinctions: 0
+Generation time: 488.600 sec (328.518 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-7
+
+ ****** Running generation 7 ****** 
+
+  individuo  1/20  id    89  calidad   15.7  pasos 25+49/200  perdido+perdido  30.6 s
+  individuo  2/20  id   129  calidad   -4.2  pasos 25+25/200  quieto+quieto  22.1 s
+  individuo  3/20  id   130  calidad    4.5  pasos 25+34/200  quieto+perdido  24.8 s
+  individuo  4/20  id   131  calidad   15.4  pasos 34+65/200  choque+perdido  38.4 s
+  individuo  5/20  id   132  calidad   34.4  pasos 117+84/200  perdido+perdido  75.8 s
+  individuo  6/20  id   133  calidad    3.1  pasos 9+10/200  perdido+perdido  10.0 s
+  individuo  7/20  id   124  calidad   22.5  pasos 50+61/200  perdido+perdido  42.4 s
+  individuo  8/20  id   134  calidad   10.2  pasos 37+35/200  perdido+perdido  28.0 s
+  individuo  9/20  id   135  calidad    4.5  pasos 14+14/200  perdido+perdido  13.2 s
+  individuo 10/20  id   136  calidad    4.7  pasos 14+14/200  perdido+perdido  14.2 s
+  individuo 11/20  id   137  calidad   -1.3  pasos 10+11/200  perdido+choque  10.6 s
+  individuo 12/20  id   138  calidad    3.9  pasos 11+12/200  perdido+perdido  12.0 s
+  individuo 13/20  id   139  calidad   13.0  pasos 19+59/200  perdido+perdido  30.8 s
+  individuo 14/20  id   140  calidad   -1.6  pasos 14+14/200  choque+perdido  13.0 s
+  individuo 15/20  id   123  calidad   34.6  pasos 123+48/200  perdido+perdido  64.2 s
+  individuo 16/20  id   141  calidad    7.5  pasos 9+35/200  perdido+perdido  18.2 s
+  individuo 17/20  id   142  calidad   -4.6  pasos 25+25/200  quieto+quieto  20.8 s
+  individuo 18/20  id   143  calidad    3.8  pasos 9+14/200  perdido+perdido  11.8 s
+  individuo 19/20  id   144  calidad    7.8  pasos 20+23/200  perdido+perdido  18.4 s
+  individuo 20/20  id   145  calidad    5.8  pasos 13+27/200  perdido+perdido  17.8 s
+Population's average fitness: 8.99611 stdev: 10.77913
+Best fitness: 34.61177 - size: (2, 11) - species 1 - id 123
+Average adjusted fitness: 0.352
+Mean genetic distance 0.608, standard deviation 0.380
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    7     7     34.612    0.350     0
+     3    6     6     22.485    0.295     2
+     6    4     7     34.430    0.410     0
+Total extinctions: 0
+Generation time: 516.977 sec (352.075 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-8
+
+ ****** Running generation 8 ****** 
+
+  individuo  1/20  id   124  calidad   18.7  pasos 42+51/200  perdido+perdido  34.8 s
+  individuo  2/20  id   146  calidad   63.9  pasos 200+113/200  completo+perdido 115.6 s
+  individuo  3/20  id   147  calidad   42.1  pasos 71+143/200  perdido+perdido  83.4 s
+  individuo  4/20  id   148  calidad   11.5  pasos 24+40/200  perdido+perdido  26.8 s
+  individuo  5/20  id   149  calidad   24.3  pasos 121+18/200  perdido+perdido  55.8 s
+  individuo  6/20  id   150  calidad    5.2  pasos 13+15/200  perdido+perdido  13.4 s
+  individuo  7/20  id   132  calidad   14.8  pasos 80+60/200  perdido+choque  54.0 s
+  individuo  8/20  id   151  calidad   11.1  pasos 8+56/200  perdido+perdido  26.6 s
+  individuo  9/20  id   152  calidad   23.3  pasos 91+92/200  choque+choque  68.6 s
+  individuo 10/20  id   153  calidad   16.6  pasos 29+86/200  perdido+perdido  42.6 s
+  individuo 11/20  id   154  calidad   15.0  pasos 30+53/200  perdido+perdido  33.0 s
+  individuo 12/20  id   155  calidad    7.6  pasos 21+23/200  perdido+perdido  19.0 s
+  individuo 13/20  id   156  calidad    5.4  pasos 9+28/200  perdido+perdido  16.4 s
+  individuo 14/20  id   123  calidad   25.6  pasos 57+65/200  perdido+perdido  45.6 s
+  individuo 15/20  id   157  calidad   21.9  pasos 58+88/200  choque+choque  55.6 s
+  individuo 16/20  id   158  calidad   -1.4  pasos 9+13/200  choque+perdido  12.4 s
+  individuo 17/20  id   159  calidad   29.6  pasos 90+103/200  choque+choque  72.4 s
+  individuo 18/20  id   160  calidad    3.8  pasos 13+14/200  perdido+perdido  14.0 s
+  individuo 19/20  id   161  calidad    2.9  pasos 11+10/200  perdido+perdido  12.0 s
+  individuo 20/20  id   162  calidad    3.2  pasos 11+12/200  perdido+perdido  12.0 s
+Population's average fitness: 17.25513 stdev: 15.03950
+Best fitness: 63.93312 - size: (3, 12) - species 3 - id 146
+Average adjusted fitness: 0.294
+Mean genetic distance 0.640, standard deviation 0.395
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    8     6     29.636    0.209     1
+     3    7     8     63.933    0.445     0
+     6    5     6     23.335    0.227     1
+Total extinctions: 0
+Generation time: 813.977 sec (403.398 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-9
+
+ ****** Running generation 9 ****** 
+
+  individuo  1/20  id   152  calidad   16.2  pasos 24+87/200  perdido+perdido  41.0 s
+  individuo  2/20  id   163  calidad    2.8  pasos 9+9/200  perdido+perdido   9.6 s
+  individuo  3/20  id   164  calidad   14.9  pasos 32+50/200  perdido+perdido  33.2 s
+  individuo  4/20  id   165  calidad    7.2  pasos 23+16/200  perdido+perdido  17.4 s
+  individuo  5/20  id   166  calidad    8.2  pasos 23+27/200  perdido+perdido  22.2 s
+  individuo  6/20  id   167  calidad   46.4  pasos 148+113/200  perdido+perdido  96.8 s
+  individuo  7/20  id   159  calidad   26.0  pasos 73+61/200  perdido+perdido  52.4 s
+  individuo  8/20  id   168  calidad   88.6  pasos 200+200/200  completo+completo 149.6 s
+  individuo  9/20  id   169  calidad   27.7  pasos 107+45/200  perdido+perdido  59.0 s
+  individuo 10/20  id   170  calidad   -2.4  pasos 11+10/200  perdido+choque  11.4 s
+  individuo 11/20  id   171  calidad   24.7  pasos 14+103/200  perdido+perdido  45.8 s
+  individuo 12/20  id   172  calidad    7.8  pasos 26+24/200  perdido+perdido  21.6 s
+  individuo 13/20  id   146  calidad    9.2  pasos 35+24/200  perdido+perdido  24.6 s
+  individuo 14/20  id   173  calidad   20.0  pasos 94+32/200  perdido+perdido  49.4 s
+  individuo 15/20  id   174  calidad   -2.5  pasos 25+25/200  quieto+quieto  21.0 s
+  individuo 16/20  id   175  calidad   12.2  pasos 38+41/200  perdido+perdido  31.2 s
+  individuo 17/20  id   176  calidad   -3.4  pasos 25+25/200  quieto+quieto  19.8 s
+  individuo 18/20  id   177  calidad   22.5  pasos 78+44/200  perdido+perdido  46.2 s
+  individuo 19/20  id   178  calidad   34.0  pasos 105+93/200  perdido+perdido  71.4 s
+  individuo 20/20  id   179  calidad   -4.2  pasos 25+25/200  quieto+quieto  20.2 s
+Population's average fitness: 17.79657 stdev: 20.90699
+Best fitness: 88.62494 - size: (2, 11) - species 1 - id 168
+Average adjusted fitness: 0.245
+Mean genetic distance 0.586, standard deviation 0.394
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1    9     8     88.625    0.355     0
+     3    8     6     34.018    0.163     1
+     6    6     6     46.441    0.217     0
+Total extinctions: 0
+Generation time: 843.839 sec (447.442 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-10
+
+ ****** Running generation 10 ****** 
+
+  individuo  1/20  id   178  calidad   10.4  pasos 36+23/200  perdido+perdido  23.9 s
+  individuo  2/20  id   180  calidad    7.0  pasos 9+33/200  perdido+perdido  18.6 s
+  individuo  3/20  id   181  calidad   13.6  pasos 47+45/200  perdido+perdido  35.0 s
+  individuo  4/20  id   182  calidad   26.2  pasos 75+110/200  perdido+perdido  68.2 s
+  individuo  5/20  id   183  calidad   18.8  pasos 87+31/200  perdido+perdido  44.2 s
+  individuo  6/20  id   184  calidad    8.7  pasos 39+24/200  perdido+perdido  25.8 s
+  individuo  7/20  id   167  calidad   36.6  pasos 179+38/200  perdido+perdido  82.6 s
+  individuo  8/20  id   185  calidad   11.1  pasos 43+37/200  perdido+perdido  31.6 s
+  individuo  9/20  id   186  calidad   27.8  pasos 31+120/200  perdido+perdido  57.2 s
+  individuo 10/20  id   187  calidad    9.0  pasos 28+29/200  perdido+perdido  24.8 s
+  individuo 11/20  id   188  calidad    5.9  pasos 9+35/200  perdido+perdido  19.4 s
+  individuo 12/20  id   189  calidad   14.7  pasos 100+19/200  perdido+perdido  46.2 s
+  individuo 13/20  id   168  calidad   29.4  pasos 154+29/200  perdido+perdido  69.2 s
+  individuo 14/20  id   190  calidad   19.5  pasos 30+77/200  perdido+perdido  41.0 s
+  individuo 15/20  id   191  calidad   36.1  pasos 26+179/200  perdido+perdido  79.0 s
+  individuo 16/20  id   192  calidad   45.7  pasos 200+26/200  completo+perdido  84.2 s
+  individuo 17/20  id   193  calidad   19.7  pasos 67+37/200  perdido+perdido  41.4 s
+  individuo 18/20  id   194  calidad    8.9  pasos 45+23/200  perdido+perdido  27.4 s
+  individuo 19/20  id   195  calidad   30.5  pasos 146+37/200  perdido+perdido  68.4 s
+  individuo 20/20  id   196  calidad   23.7  pasos 17+123/200  perdido+perdido  52.2 s
+Population's average fitness: 20.16525 stdev: 11.16427
+Best fitness: 45.73836 - size: (2, 11) - species 1 - id 192
+Average adjusted fitness: 0.340
+Mean genetic distance 0.625, standard deviation 0.386
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   10     9     45.738    0.522     1
+     3    9     6     26.249    0.207     2
+     6    7     5     36.561    0.292     1
+Total extinctions: 0
+Generation time: 940.342 sec (519.167 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-11
+
+ ****** Running generation 11 ****** 
+
+  individuo  1/20  id   182  calidad   11.0  pasos 31+40/200  perdido+perdido  28.0 s
+  individuo  2/20  id   197  calidad   21.2  pasos 38+86/200  perdido+perdido  47.6 s
+  individuo  3/20  id   198  calidad   20.3  pasos 103+31/200  perdido+perdido  51.4 s
+  individuo  4/20  id   199  calidad   -4.0  pasos 25+25/200  quieto+quieto  20.4 s
+  individuo  5/20  id   200  calidad   18.0  pasos 16+80/200  perdido+perdido  39.2 s
+  individuo  6/20  id   201  calidad   10.8  pasos 24+41/200  perdido+perdido  27.0 s
+  individuo  7/20  id   167  calidad    7.7  pasos 12+33/200  perdido+perdido  20.6 s
+  individuo  8/20  id   202  calidad   10.7  pasos 32+32/200  perdido+perdido  27.2 s
+  individuo  9/20  id   203  calidad    5.5  pasos 11+24/200  perdido+perdido  16.0 s
+  individuo 10/20  id   204  calidad    0.0  pasos 25+10/200  quieto+perdido  15.8 s
+  individuo 11/20  id   205  calidad    5.3  pasos 15+19/200  perdido+perdido  15.8 s
+  individuo 12/20  id   192  calidad   24.8  pasos 137+37/200  choque+perdido  65.8 s
+  individuo 13/20  id   206  calidad    8.7  pasos 24+31/200  perdido+perdido  24.2 s
+  individuo 14/20  id   207  calidad    3.9  pasos 25+23/200  quieto+perdido  20.6 s
+  individuo 15/20  id   208  calidad   14.8  pasos 51+39/200  perdido+perdido  35.6 s
+  individuo 16/20  id   209  calidad    4.8  pasos 20+15/200  perdido+perdido  16.8 s
+  individuo 17/20  id   210  calidad   46.9  pasos 85+146/200  perdido+perdido  87.8 s
+  individuo 18/20  id   211  calidad   37.0  pasos 22+168/200  perdido+perdido  72.6 s
+  individuo 19/20  id   212  calidad    4.5  pasos 28+34/200  perdido+atascado  26.0 s
+  individuo 20/20  id   213  calidad    2.8  pasos 11+10/200  perdido+perdido  10.6 s
+Population's average fitness: 12.72310 stdev: 12.18461
+Best fitness: 46.92299 - size: (2, 10) - species 1 - id 210
+Average adjusted fitness: 0.308
+Mean genetic distance 0.572, standard deviation 0.376
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   11     9     46.923    0.401     2
+     3   10     6     21.160    0.331     3
+     6    8     5     10.673    0.192     2
+Total extinctions: 0
+Generation time: 668.985 sec (562.467 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-12
+
+ ****** Running generation 12 ****** 
+
+  individuo  1/20  id   202  calidad   19.0  pasos 82+23/200  perdido+perdido  41.0 s
+  individuo  2/20  id   214  calidad    1.6  pasos 17+20/200  choque+perdido  17.4 s
+  individuo  3/20  id   215  calidad    8.7  pasos 31+26/200  perdido+perdido  23.8 s
+  individuo  4/20  id   216  calidad   10.7  pasos 29+67/200  perdido+atascado  37.8 s
+  individuo  5/20  id   217  calidad    3.0  pasos 11+9/200  perdido+perdido  11.2 s
+  individuo  6/20  id   197  calidad   16.1  pasos 76+25/200  perdido+perdido  40.8 s
+  individuo  7/20  id   218  calidad   13.1  pasos 46+31/200  perdido+perdido  31.4 s
+  individuo  8/20  id   219  calidad   12.1  pasos 42+37/200  perdido+perdido  32.0 s
+  individuo  9/20  id   220  calidad   24.9  pasos 135+28/200  perdido+perdido  61.4 s
+  individuo 10/20  id   221  calidad   41.1  pasos 188+36/200  perdido+perdido  83.0 s
+  individuo 11/20  id   222  calidad   -1.1  pasos 25+25/200  quieto+quieto  19.9 s
+  individuo 12/20  id   223  calidad    7.1  pasos 46+35/200  atascado+perdido  31.1 s
+  individuo 13/20  id   210  calidad   76.0  pasos 182+200/200  atascado+completo 137.4 s
+  individuo 14/20  id   224  calidad   15.5  pasos 52+30/200  perdido+perdido  32.8 s
+  individuo 15/20  id   225  calidad   16.3  pasos 61+62/200  choque+perdido  47.6 s
+  individuo 16/20  id   226  calidad   31.0  pasos 61+85/200  perdido+perdido  56.4 s
+  individuo 17/20  id   227  calidad   12.9  pasos 28+59/200  atascado+perdido  34.8 s
+  individuo 18/20  id   228  calidad   52.1  pasos 101+200/200  perdido+completo 111.0 s
+  individuo 19/20  id   229  calidad   37.0  pasos 177+19/200  perdido+perdido  73.4 s
+  individuo 20/20  id   230  calidad   -0.1  pasos 44+8/200  choque+choque  23.0 s
+Population's average fitness: 19.85636 stdev: 18.85680
+Best fitness: 75.99617 - size: (2, 10) - species 1 - id 210
+Average adjusted fitness: 0.247
+Mean genetic distance 0.587, standard deviation 0.382
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   12    10     75.996    0.371     3
+     3   11     6     41.111    0.244     4
+     6    9     4     19.031    0.126     3
+Total extinctions: 0
+Generation time: 947.188 sec (631.247 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-13
+
+ ****** Running generation 13 ****** 
+
+  individuo  1/20  id   202  calidad    8.0  pasos 25+33/200  perdido+perdido  24.2 s
+  individuo  2/20  id   231  calidad   -3.1  pasos 25+25/200  quieto+quieto  22.2 s
+  individuo  3/20  id   232  calidad   15.1  pasos 69+29/200  choque+perdido  38.6 s
+  individuo  4/20  id   233  calidad   18.6  pasos 79+22/200  perdido+perdido  40.4 s
+  individuo  5/20  id   221  calidad   19.3  pasos 20+102/200  perdido+perdido  47.6 s
+  individuo  6/20  id   234  calidad    9.7  pasos 30+29/200  perdido+perdido  24.0 s
+  individuo  7/20  id   235  calidad    7.0  pasos 19+23/200  perdido+perdido  18.0 s
+  individuo  8/20  id   236  calidad   51.8  pasos 50+200/200  perdido+completo  93.0 s
+  individuo  9/20  id   237  calidad   36.7  pasos 34+200/200  perdido+completo  84.2 s
+  individuo 10/20  id   238  calidad   58.6  pasos 200+104/200  completo+perdido 108.0 s
+  individuo 11/20  id   239  calidad    7.9  pasos 22+29/200  perdido+perdido  20.8 s
+  individuo 12/20  id   210  calidad   44.3  pasos 127+96/200  perdido+perdido  82.4 s
+  individuo 13/20  id   240  calidad    4.9  pasos 22+11/200  perdido+perdido  14.4 s
+  individuo 14/20  id   241  calidad   55.1  pasos 200+99/200  completo+perdido 110.4 s
+  individuo 15/20  id   242  calidad   61.1  pasos 200+200/200  completo+completo 146.6 s
+  individuo 16/20  id   243  calidad   64.9  pasos 200+179/200  completo+perdido 138.6 s
+  individuo 17/20  id   244  calidad   41.0  pasos 104+128/200  choque+perdido  89.2 s
+  individuo 18/20  id   245  calidad    3.5  pasos 13+10/200  perdido+perdido  11.8 s
+  individuo 19/20  id   246  calidad   49.6  pasos 200+59/200  completo+perdido  93.8 s
+  individuo 20/20  id   247  calidad   39.8  pasos 18+200/200  perdido+completo  79.4 s
+Population's average fitness: 29.68031 stdev: 22.09039
+Best fitness: 64.87380 - size: (2, 10) - species 1 - id 243
+Average adjusted fitness: 0.415
+Mean genetic distance 0.768, standard deviation 0.432
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   13    10     64.874    0.635     4
+     3   12     7     58.570    0.423     5
+     6   10     3     18.588    0.188     4
+Total extinctions: 0
+Generation time: 1287.598 sec (731.248 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-14
+
+ ****** Running generation 14 ****** 
+
+  individuo  1/20  id   233  calidad   28.4  pasos 65+90/200  perdido+perdido  57.4 s
+  individuo  2/20  id   248  calidad   13.0  pasos 25+46/200  perdido+perdido  28.6 s
+  individuo  3/20  id   249  calidad    4.4  pasos 13+14/200  perdido+perdido  12.6 s
+  individuo  4/20  id   238  calidad   54.4  pasos 93+200/200  perdido+completo 104.8 s
+  individuo  5/20  id   250  calidad   15.1  pasos 52+29/200  perdido+perdido  30.8 s
+  individuo  6/20  id   251  calidad   30.1  pasos 41+167/200  perdido+perdido  76.8 s
+  individuo  7/20  id   252  calidad   59.7  pasos 199+117/200  perdido+perdido 114.8 s
+  individuo  8/20  id   253  calidad   77.6  pasos 200+200/200  completo+completo 146.8 s
+  individuo  9/20  id   254  calidad   15.0  pasos 63+21/200  perdido+perdido  33.4 s
+  individuo 10/20  id   255  calidad   10.4  pasos 42+17/200  perdido+perdido  24.4 s
+  individuo 11/20  id   243  calidad   51.9  pasos 112+180/200  perdido+perdido 110.6 s
+  individuo 12/20  id   256  calidad    7.1  pasos 19+28/200  perdido+perdido  20.4 s
+  individuo 13/20  id   257  calidad    0.6  pasos 32+32/200  atascado+atascado  25.8 s
+  individuo 14/20  id   258  calidad   10.2  pasos 45+18/200  perdido+perdido  26.8 s
+  individuo 15/20  id   259  calidad   26.9  pasos 71+128/200  perdido+perdido  73.0 s
+  individuo 16/20  id   260  calidad    5.5  pasos 18+22/200  perdido+perdido  16.4 s
+  individuo 17/20  id   261  calidad   47.7  pasos 200+39/200  completo+perdido  87.0 s
+  individuo 18/20  id   262  calidad   17.7  pasos 74+47/200  perdido+perdido  44.6 s
+  individuo 19/20  id   263  calidad   50.7  pasos 89+200/200  perdido+completo 103.8 s
+  individuo 20/20  id   264  calidad   22.7  pasos 112+46/200  perdido+perdido  59.4 s
+Population's average fitness: 27.45588 stdev: 21.46058
+Best fitness: 77.63413 - size: (3, 12) - species 3 - id 253
+Average adjusted fitness: 0.324
+Mean genetic distance 0.667, standard deviation 0.454
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   14     9     51.912    0.305     5
+     3   13     7     77.634    0.479     0
+     6   11     4     28.363    0.190     5
+Total extinctions: 0
+Generation time: 1198.173 sec (818.707 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-15
+
+ ****** Running generation 15 ****** 
+
+  individuo  1/20  id   233  calidad   15.4  pasos 58+28/200  perdido+perdido  32.4 s
+  individuo  2/20  id   265  calidad   -0.4  pasos 15+11/200  perdido+choque  12.4 s
+  individuo  3/20  id   266  calidad    1.3  pasos 17+21/200  choque+perdido  16.8 s
+  individuo  4/20  id   267  calidad    5.2  pasos 17+17/200  perdido+perdido  15.0 s
+  individuo  5/20  id   243  calidad   40.5  pasos 38+200/200  perdido+perdido  88.2 s
+  individuo  6/20  id   268  calidad   -1.5  pasos 11+13/200  choque+perdido  12.2 s
+  individuo  7/20  id   269  calidad   54.5  pasos 97+200/200  perdido+completo 109.0 s
+  individuo  8/20  id   270  calidad   19.1  pasos 36+106/200  perdido+perdido  55.4 s
+  individuo  9/20  id   271  calidad    8.9  pasos 30+42/200  perdido+perdido  29.2 s
+  individuo 10/20  id   272  calidad   68.0  pasos 200+200/200  completo+completo 147.4 s
+  individuo 11/20  id   273  calidad    7.4  pasos 24+18/200  perdido+perdido  18.0 s
+  individuo 12/20  id   274  calidad    5.2  pasos 31+15/200  perdido+perdido  20.6 s
+  individuo 13/20  id   253  calidad   23.7  pasos 104+19/200  perdido+perdido  48.8 s
+  individuo 14/20  id   275  calidad   55.1  pasos 95+200/200  perdido+completo 107.0 s
+  individuo 15/20  id   276  calidad   78.0  pasos 200+200/200  completo+completo 140.4 s
+  individuo 16/20  id   277  calidad    9.2  pasos 65+35/200  atascado+perdido  37.8 s
+  individuo 17/20  id   278  calidad   -2.4  pasos 25+25/200  quieto+quieto  20.0 s
+  individuo 18/20  id   279  calidad   11.7  pasos 35+32/200  perdido+perdido  27.2 s
+  individuo 19/20  id   280  calidad   13.4  pasos 54+26/200  perdido+perdido  30.8 s
+  individuo 20/20  id   281  calidad    6.0  pasos 11+32/200  perdido+perdido  18.2 s
+Population's average fitness: 20.91810 stdev: 23.86697
+Best fitness: 77.96266 - size: (3, 12) - species 3 - id 276
+Average adjusted fitness: 0.261
+Mean genetic distance 0.666, standard deviation 0.470
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   15     8     68.042    0.306     6
+     3   14     8     77.963    0.380     0
+     6   12     4     15.427    0.096     6
+Total extinctions: 0
+Generation time: 986.785 sec (869.246 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-16
+
+ ****** Running generation 16 ****** 
+
+  individuo  1/20  id   233  calidad   23.6  pasos 76+79/200  choque+perdido  56.6 s
+  individuo  2/20  id   282  calidad    4.9  pasos 13+14/200  perdido+perdido  11.4 s
+  individuo  3/20  id   283  calidad    2.1  pasos 26+15/200  atascado+perdido  18.4 s
+  individuo  4/20  id   284  calidad   30.2  pasos 85+75/200  perdido+perdido  60.2 s
+  individuo  5/20  id   272  calidad   59.1  pasos 200+108/200  completo+perdido 112.0 s
+  individuo  6/20  id   285  calidad   11.4  pasos 42+35/200  perdido+perdido  31.0 s
+  individuo  7/20  id   286  calidad   -1.7  pasos 11+34/200  choque+atascado  20.4 s
+  individuo  8/20  id   287  calidad   72.7  pasos 200+200/200  completo+completo 146.8 s
+  individuo  9/20  id   288  calidad    6.8  pasos 25+46/200  quieto+perdido  29.0 s
+  individuo 10/20  id   289  calidad   17.3  pasos 23+92/200  perdido+perdido  44.6 s
+  individuo 11/20  id   290  calidad   35.9  pasos 22+200/200  perdido+completo  83.6 s
+  individuo 12/20  id   291  calidad   29.5  pasos 20+187/200  perdido+perdido  77.4 s
+  individuo 13/20  id   276  calidad   71.9  pasos 174+200/200  perdido+completo 135.4 s
+  individuo 14/20  id   292  calidad    9.7  pasos 34+19/200  perdido+perdido  22.6 s
+  individuo 15/20  id   293  calidad   10.2  pasos 34+33/200  perdido+perdido  26.8 s
+  individuo 16/20  id   294  calidad    6.9  pasos 53+25/200  perdido+quieto  30.2 s
+  individuo 17/20  id   295  calidad   39.2  pasos 42+200/200  perdido+completo  85.8 s
+  individuo 18/20  id   296  calidad    8.6  pasos 24+28/200  perdido+perdido  21.2 s
+  individuo 19/20  id   297  calidad    8.2  pasos 21+31/200  perdido+perdido  21.4 s
+  individuo 20/20  id   298  calidad    4.3  pasos 19+10/200  perdido+perdido  14.0 s
+Population's average fitness: 22.53565 stdev: 22.20680
+Best fitness: 72.67551 - size: (2, 11) - species 1 - id 287
+Average adjusted fitness: 0.310
+Mean genetic distance 0.789, standard deviation 0.506
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   16     9     72.676    0.411     7
+     3   15     6     71.900    0.290     1
+     6   13     5     30.189    0.227     7
+Total extinctions: 0
+Generation time: 1048.798 sec (925.266 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-17
+
+ ****** Running generation 17 ****** 
+
+  individuo  1/20  id   284  calidad   18.5  pasos 49+80/200  choque+perdido  46.6 s
+  individuo  2/20  id   299  calidad   -7.0  pasos 7+12/200  choque+choque  10.4 s
+  individuo  3/20  id   300  calidad    6.7  pasos 15+54/200  choque+perdido  28.2 s
+  individuo  4/20  id   301  calidad   13.6  pasos 31+61/200  perdido+perdido  36.4 s
+  individuo  5/20  id   302  calidad   17.1  pasos 30+74/200  perdido+perdido  42.0 s
+  individuo  6/20  id   276  calidad   72.6  pasos 161+200/200  perdido+completo 133.2 s
+  individuo  7/20  id   303  calidad   62.1  pasos 112+200/200  perdido+completo 116.6 s
+  individuo  8/20  id   304  calidad   41.8  pasos 22+200/200  perdido+completo  82.6 s
+  individuo  9/20  id   305  calidad   10.6  pasos 29+31/200  perdido+perdido  25.0 s
+  individuo 10/20  id   306  calidad   25.2  pasos 35+117/200  perdido+perdido  57.6 s
+  individuo 11/20  id   307  calidad   48.4  pasos 41+200/200  perdido+completo  88.0 s
+  individuo 12/20  id   308  calidad   81.4  pasos 200+200/200  completo+completo 143.4 s
+  individuo 13/20  id   287  calidad   73.9  pasos 165+200/200  perdido+completo 128.4 s
+  individuo 14/20  id   309  calidad   19.1  pasos 56+49/200  perdido+perdido  40.4 s
+  individuo 15/20  id   310  calidad   87.8  pasos 200+200/200  completo+completo 140.8 s
+  individuo 16/20  id   311  calidad   23.1  pasos 105+59/200  choque+choque  61.2 s
+  individuo 17/20  id   312  calidad    8.0  pasos 26+16/200  perdido+perdido  19.0 s
+  individuo 18/20  id   313  calidad   45.9  pasos 174+74/200  perdido+perdido  90.8 s
+  individuo 19/20  id   314  calidad    9.5  pasos 23+41/200  perdido+perdido  27.0 s
+  individuo 20/20  id   315  calidad   84.8  pasos 200+200/200  completo+completo 147.2 s
+Population's average fitness: 37.15120 stdev: 29.51732
+Best fitness: 87.77849 - size: (3, 11) - species 1 - id 310
+
+Species 6 with 5 members is stagnated: removing it
+Average adjusted fitness: 0.474
+Mean genetic distance 0.623, standard deviation 0.366
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   17    10     87.778    0.504     8
+     3   16     8     72.644    0.444     2
+    21    0     2         --       --     0
+Total extinctions: 0
+Generation time: 1464.780 sec (1020.046 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-18
+
+ ****** Running generation 18 ****** 
+
+  individuo  1/20  id   276  calidad   88.3  pasos 200+200/200  completo+completo 148.0 s
+  individuo  2/20  id   316  calidad    9.1  pasos 28+23/200  perdido+perdido  22.0 s
+  individuo  3/20  id   317  calidad   13.4  pasos 54+14/200  perdido+perdido  27.8 s
+  individuo  4/20  id   318  calidad   -2.2  pasos 12+10/200  perdido+choque  11.6 s
+  individuo  5/20  id   319  calidad    6.3  pasos 18+19/200  perdido+perdido  15.6 s
+  individuo  6/20  id   320  calidad    3.6  pasos 17+11/200  perdido+perdido  14.2 s
+  individuo  7/20  id   321  calidad   76.4  pasos 200+200/200  completo+completo 144.4 s
+  individuo  8/20  id   322  calidad   32.7  pasos 73+82/200  perdido+perdido  58.6 s
+  individuo  9/20  id   323  calidad   35.7  pasos 56+119/200  perdido+perdido  66.2 s
+  individuo 10/20  id   310  calidad   25.4  pasos 64+58/200  perdido+perdido  48.2 s
+  individuo 11/20  id   324  calidad   52.9  pasos 200+100/200  completo+perdido 112.8 s
+  individuo 12/20  id   325  calidad   91.7  pasos 200+200/200  completo+completo 148.0 s
+  individuo 13/20  id   326  calidad   22.0  pasos 56+55/200  perdido+perdido  43.2 s
+  individuo 14/20  id   327  calidad   46.9  pasos 70+151/200  perdido+perdido  82.2 s
+  individuo 15/20  id   328  calidad   13.7  pasos 35+42/200  perdido+perdido  30.4 s
+  individuo 16/20  id   329  calidad   13.4  pasos 15+62/200  perdido+perdido  30.8 s
+  individuo 17/20  id   330  calidad   15.6  pasos 52+29/200  perdido+perdido  32.8 s
+  individuo 18/20  id   331  calidad   16.0  pasos 51+33/200  perdido+perdido  33.6 s
+  individuo 19/20  id   332  calidad   46.3  pasos 141+74/200  perdido+perdido  78.8 s
+  individuo 20/20  id   333  calidad   37.8  pasos 56+140/200  perdido+perdido  71.0 s
+Population's average fitness: 32.25535 stdev: 26.91041
+Best fitness: 91.69678 - size: (3, 10) - species 1 - id 325
+Average adjusted fitness: 0.323
+Mean genetic distance 0.809, standard deviation 0.421
+Population of 20 members in 3 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   18     2     91.697    0.471     0
+     3   17     7     88.342    0.273     0
+    21    1    11     21.969    0.226     0
+Total extinctions: 0
+Generation time: 1220.193 sec (1060.668 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-19
+
+ ****** Running generation 19 ****** 
+
+  individuo  1/20  id   326  calidad    6.9  pasos 42+41/200  choque+atascado  32.6 s
+  individuo  2/20  id   334  calidad    3.7  pasos 11+16/200  perdido+perdido  12.4 s
+  individuo  3/20  id   335  calidad   85.3  pasos 200+200/200  completo+completo 148.2 s
+  individuo  4/20  id   336  calidad   26.3  pasos 64+61/200  perdido+perdido  48.4 s
+  individuo  5/20  id   276  calidad   88.9  pasos 200+200/200  completo+completo 145.4 s
+  individuo  6/20  id   337  calidad    7.6  pasos 21+19/200  perdido+perdido  18.2 s
+  individuo  7/20  id   338  calidad   56.1  pasos 59+200/200  perdido+completo  99.2 s
+  individuo  8/20  id   339  calidad   10.9  pasos 46+14/200  perdido+perdido  23.4 s
+  individuo  9/20  id   340  calidad    4.5  pasos 11+19/200  perdido+perdido  14.4 s
+  individuo 10/20  id   341  calidad   35.4  pasos 106+54/200  perdido+perdido  61.2 s
+  individuo 11/20  id   342  calidad    2.8  pasos 9+9/200  perdido+perdido  10.0 s
+  individuo 12/20  id   325  calidad   88.6  pasos 200+200/200  completo+completo 145.4 s
+  individuo 13/20  id   343  calidad   19.2  pasos 60+39/200  perdido+perdido  37.4 s
+  individuo 14/20  id   344  calidad   54.9  pasos 200+78/200  completo+perdido  99.6 s
+  individuo 15/20  id   345  calidad   17.1  pasos 32+74/200  perdido+perdido  41.4 s
+  individuo 16/20  id   346  calidad    2.8  pasos 9+9/200  perdido+perdido   9.6 s
+  individuo 17/20  id   347  calidad   43.3  pasos 106+122/200  perdido+choque  85.4 s
+  individuo 18/20  id   348  calidad   86.3  pasos 200+200/200  completo+completo 147.2 s
+  individuo 19/20  id   349  calidad    5.0  pasos 37+17/200  atascado+perdido  23.8 s
+  individuo 20/20  id   350  calidad   75.3  pasos 200+200/200  completo+completo 149.2 s
+Population's average fitness: 36.03916 stdev: 32.48506
+Best fitness: 88.92324 - size: (3, 12) - species 3 - id 276
+Average adjusted fitness: 0.404
+Mean genetic distance 0.942, standard deviation 0.519
+Population of 20 members in 4 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   19     8     86.291    0.485     1
+     3   18     5     88.923    0.310     0
+    21    2     5     88.567    0.417     0
+    24    0     2         --       --     0
+Total extinctions: 0
+Generation time: 1352.377 sec (1111.522 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-20
+
+ ****** Running generation 20 ****** 
+
+  individuo  1/20  id   348  calidad   83.5  pasos 200+200/200  completo+completo 149.8 s
+  individuo  2/20  id   351  calidad    2.9  pasos 9+9/200  perdido+perdido  10.8 s
+  individuo  3/20  id   352  calidad    3.0  pasos 10+9/200  perdido+perdido   9.8 s
+  individuo  4/20  id   353  calidad    3.1  pasos 9+9/200  perdido+perdido   9.6 s
+  individuo  5/20  id   354  calidad   80.4  pasos 200+200/200  completo+completo 143.8 s
+  individuo  6/20  id   325  calidad   54.2  pasos 200+56/200  completo+perdido  92.8 s
+  individuo  7/20  id   355  calidad   21.5  pasos 58+54/200  perdido+perdido  42.6 s
+  individuo  8/20  id   356  calidad    4.1  pasos 12+11/200  perdido+perdido  12.6 s
+  individuo  9/20  id   357  calidad   38.2  pasos 33+147/200  perdido+perdido  67.0 s
+  individuo 10/20  id   358  calidad   32.5  pasos 163+29/200  perdido+perdido  72.4 s
+  individuo 11/20  id   359  calidad   14.6  pasos 21+72/200  perdido+perdido  38.6 s
+  individuo 12/20  id   360  calidad   48.4  pasos 84+200/200  perdido+completo 106.8 s
+  individuo 13/20  id   361  calidad    2.0  pasos 9+10/200  perdido+perdido  10.2 s
+  individuo 14/20  id   362  calidad   68.1  pasos 133+200/200  perdido+completo 124.0 s
+  individuo 15/20  id   276  calidad   89.3  pasos 200+200/200  completo+completo 149.8 s
+  individuo 16/20  id   363  calidad   -0.8  pasos 14+16/200  choque+perdido  13.8 s
+  individuo 17/20  id   364  calidad   32.4  pasos 149+43/200  perdido+perdido  71.4 s
+  individuo 18/20  id   365  calidad    3.1  pasos 10+12/200  perdido+perdido  12.2 s
+  individuo 19/20  id   366  calidad   55.1  pasos 50+200/200  perdido+completo  91.6 s
+  individuo 20/20  id   367  calidad    6.7  pasos 17+20/200  perdido+perdido  17.2 s
+Population's average fitness: 32.11808 stdev: 30.04865
+Best fitness: 89.32973 - size: (3, 12) - species 3 - id 276
+Average adjusted fitness: 0.383
+Mean genetic distance 0.909, standard deviation 0.493
+Population of 20 members in 4 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   20     5     83.455    0.375     2
+     3   19     4     89.330    0.349     0
+    21    3     4     68.066    0.317     1
+    24    1     7     48.388    0.489     0
+Total extinctions: 0
+Generation time: 1246.794 sec (1142.167 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-21
+
+ ****** Running generation 21 ****** 
+
+  individuo  1/20  id   360  calidad   51.9  pasos 138+200/200  perdido+completo 121.4 s
+  individuo  2/20  id   368  calidad   49.0  pasos 200+67/200  completo+perdido  94.4 s
+  individuo  3/20  id   369  calidad   40.6  pasos 110+85/200  perdido+perdido  74.8 s
+  individuo  4/20  id   370  calidad   23.6  pasos 27+113/200  perdido+perdido  54.2 s
+  individuo  5/20  id   371  calidad   89.1  pasos 200+200/200  completo+completo 146.8 s
+  individuo  6/20  id   362  calidad   62.3  pasos 108+200/200  perdido+completo 116.8 s
+  individuo  7/20  id   372  calidad    9.9  pasos 36+27/200  perdido+perdido  26.6 s
+  individuo  8/20  id   373  calidad   53.9  pasos 97+196/200  perdido+perdido 107.0 s
+  individuo  9/20  id   374  calidad   -3.3  pasos 25+25/200  quieto+quieto  21.6 s
+  individuo 10/20  id   348  calidad   64.0  pasos 200+123/200  completo+perdido 116.3 s
+  individuo 11/20  id   375  calidad   13.8  pasos 24+47/200  perdido+perdido  28.6 s
+  individuo 12/20  id   376  calidad   51.7  pasos 63+200/200  choque+completo  93.8 s
+  individuo 13/20  id   377  calidad   90.9  pasos 200+200/200  completo+completo 144.2 s
+  individuo 14/20  id   378  calidad   10.0  pasos 39+16/200  perdido+perdido  22.8 s
+  individuo 15/20  id   379  calidad    2.7  pasos 10+10/200  perdido+perdido  12.2 s
+  individuo 16/20  id   380  calidad   22.6  pasos 87+27/200  perdido+perdido  44.2 s
+  individuo 17/20  id   276  calidad   91.0  pasos 200+200/200  completo+completo 146.4 s
+  individuo 18/20  id   381  calidad   85.7  pasos 200+200/200  completo+completo 148.0 s
+  individuo 19/20  id   382  calidad   14.8  pasos 52+49/200  perdido+choque  40.6 s
+  individuo 20/20  id   383  calidad    3.1  pasos 10+9/200  perdido+perdido  10.8 s
+Population's average fitness: 41.37823 stdev: 31.30859
+Best fitness: 90.96262 - size: (3, 12) - species 3 - id 276
+Average adjusted fitness: 0.472
+Mean genetic distance 0.889, standard deviation 0.509
+Population of 20 members in 4 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   21     6     90.916    0.500     3
+     3   20     5     90.963    0.551     0
+    21    4     3     62.345    0.361     2
+    24    2     6     89.125    0.476     0
+Total extinctions: 0
+Generation time: 1571.587 sec (1232.427 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-22
+
+ ****** Running generation 22 ****** 
+
+  individuo  1/20  id   362  calidad   68.3  pasos 200+143/200  completo+perdido 121.0 s
+  individuo  2/20  id   384  calidad    4.3  pasos 19+10/200  perdido+perdido  14.2 s
+  individuo  3/20  id   385  calidad    7.3  pasos 40+9/200  perdido+perdido  21.0 s
+  individuo  4/20  id   371  calidad   13.6  pasos 12+57/200  perdido+perdido  27.0 s
+  individuo  5/20  id   386  calidad   11.6  pasos 26+41/200  perdido+perdido  27.2 s
+  individuo  6/20  id   387  calidad   31.2  pasos 72+125/200  perdido+perdido  73.2 s
+  individuo  7/20  id   388  calidad   11.9  pasos 46+13/200  perdido+perdido  25.0 s
+  individuo  8/20  id   389  calidad    4.6  pasos 14+16/200  perdido+perdido  14.4 s
+  individuo  9/20  id   390  calidad   23.7  pasos 62+65/200  perdido+perdido  48.8 s
+  individuo 10/20  id   377  calidad   75.3  pasos 133+200/200  perdido+completo 123.4 s
+  individuo 11/20  id   391  calidad   -2.6  pasos 25+25/200  quieto+quieto  20.3 s
+  individuo 12/20  id   392  calidad   -2.6  pasos 12+5/200  perdido+choque  10.0 s
+  individuo 13/20  id   393  calidad   23.5  pasos 98+57/200  choque+choque  58.4 s
+  individuo 14/20  id   394  calidad   70.6  pasos 153+200/200  perdido+completo 131.8 s
+  individuo 15/20  id   395  calidad    9.5  pasos 55+46/200  choque+choque  40.4 s
+  individuo 16/20  id   276  calidad   90.0  pasos 200+200/200  completo+completo 147.8 s
+  individuo 17/20  id   396  calidad   82.0  pasos 200+200/200  completo+completo 144.0 s
+  individuo 18/20  id   397  calidad   63.8  pasos 200+95/200  completo+perdido 107.8 s
+  individuo 19/20  id   398  calidad   13.4  pasos 9+65/200  perdido+perdido  29.2 s
+  individuo 20/20  id   399  calidad   76.3  pasos 200+200/200  completo+completo 146.0 s
+Population's average fitness: 33.78200 stdev: 31.71842
+Best fitness: 89.96139 - size: (3, 12) - species 3 - id 276
+Average adjusted fitness: 0.398
+Mean genetic distance 0.899, standard deviation 0.546
+Population of 20 members in 4 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   22     5     75.273    0.341     4
+     3   21     7     89.961    0.731     1
+    21    5     4     68.272    0.316     3
+    24    3     4     31.158    0.202     1
+Total extinctions: 0
+Generation time: 1330.792 sec (1270.788 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-23
+
+ ****** Running generation 23 ****** 
+
+  individuo  1/20  id   387  calidad   24.2  pasos 46+111/200  perdido+perdido  60.6 s
+  individuo  2/20  id   400  calidad   -2.4  pasos 10+8/200  perdido+choque  11.0 s
+  individuo  3/20  id   401  calidad   59.6  pasos 114+200/200  perdido+completo 116.2 s
+  individuo  4/20  id   402  calidad   19.3  pasos 14+104/200  perdido+perdido  46.0 s
+  individuo  5/20  id   362  calidad   87.0  pasos 200+200/200  completo+completo 147.6 s
+  individuo  6/20  id   403  calidad   57.6  pasos 200+85/200  completo+perdido 103.8 s
+  individuo  7/20  id   404  calidad    6.5  pasos 19+23/200  perdido+perdido  18.6 s
+  individuo  8/20  id   405  calidad   17.8  pasos 50+51/200  perdido+perdido  38.6 s
+  individuo  9/20  id   377  calidad   16.8  pasos 67+46/200  choque+perdido  43.2 s
+  individuo 10/20  id   406  calidad    9.3  pasos 13+61/200  perdido+choque  29.8 s
+  individuo 11/20  id   407  calidad   80.7  pasos 200+200/200  completo+completo 145.8 s
+  individuo 12/20  id   408  calidad   57.4  pasos 76+200/200  perdido+completo 102.2 s
+  individuo 13/20  id   409  calidad   77.7  pasos 200+200/200  completo+completo 145.6 s
+  individuo 14/20  id   276  calidad   90.5  pasos 200+200/200  completo+completo 146.0 s
+  individuo 15/20  id   410  calidad   84.6  pasos 200+200/200  completo+completo 143.0 s
+  individuo 16/20  id   411  calidad   49.4  pasos 200+17/200  completo+perdido  80.0 s
+  individuo 17/20  id   412  calidad    5.0  pasos 44+10/200  choque+perdido  22.4 s
+  individuo 18/20  id   413  calidad   51.7  pasos 200+53/200  completo+perdido  92.0 s
+  individuo 19/20  id   414  calidad   56.8  pasos 200+67/200  completo+perdido  95.4 s
+  individuo 20/20  id   415  calidad   88.9  pasos 200+200/200  completo+completo 143.6 s
+Population's average fitness: 46.92577 stdev: 31.27752
+Best fitness: 90.52334 - size: (3, 12) - species 3 - id 276
+Average adjusted fitness: 0.502
+Mean genetic distance 0.946, standard deviation 0.547
+Population of 20 members in 4 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   23     6     80.732    0.547     5
+     3   22     6     90.523    0.682     2
+    21    6     5     86.958    0.480     4
+    24    4     3     59.594    0.297     2
+Total extinctions: 0
+Generation time: 1731.388 sec (1315.167 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-24
+
+ ****** Running generation 24 ****** 
+
+  individuo  1/20  id   401  calidad   53.3  pasos 200+84/200  completo+perdido 105.8 s
+  individuo  2/20  id   416  calidad   48.9  pasos 104+130/200  perdido+perdido  86.0 s
+  individuo  3/20  id   417  calidad   63.1  pasos 158+200/200  perdido+completo 134.0 s
+  individuo  4/20  id   407  calidad   76.2  pasos 200+169/200  completo+perdido 133.2 s
+  individuo  5/20  id   418  calidad   37.0  pasos 192+19/200  perdido+perdido  76.2 s
+  individuo  6/20  id   419  calidad   39.9  pasos 135+93/200  choque+perdido  84.8 s
+  individuo  7/20  id   420  calidad   14.9  pasos 16+69/200  perdido+perdido  33.0 s
+  individuo  8/20  id   421  calidad   79.5  pasos 200+200/200  completo+completo 145.2 s
+  individuo  9/20  id   422  calidad   52.3  pasos 96+200/200  perdido+completo 107.2 s
+  individuo 10/20  id   362  calidad   45.9  pasos 200+37/200  completo+choque  86.6 s
+  individuo 11/20  id   423  calidad    3.6  pasos 10+11/200  perdido+perdido  11.4 s
+  individuo 12/20  id   424  calidad   49.9  pasos 49+200/200  perdido+completo  92.2 s
+  individuo 13/20  id   425  calidad   34.8  pasos 123+51/200  perdido+perdido  66.6 s
+  individuo 14/20  id   426  calidad    3.3  pasos 11+9/200  perdido+perdido  10.6 s
+  individuo 15/20  id   276  calidad   90.4  pasos 200+200/200  completo+completo 147.0 s
+  individuo 16/20  id   427  calidad   56.5  pasos 188+67/200  perdido+perdido  94.2 s
+  individuo 17/20  id   428  calidad    2.3  pasos 8+8/200  perdido+perdido   9.6 s
+  individuo 18/20  id   429  calidad   62.6  pasos 200+90/200  completo+perdido 105.2 s
+  individuo 19/20  id   430  calidad   -7.3  pasos 8+14/200  choque+choque  10.6 s
+  individuo 20/20  id   431  calidad   -2.2  pasos 9+11/200  choque+perdido  10.6 s
+Population's average fitness: 40.24434 stdev: 28.33309
+Best fitness: 90.42680 - size: (3, 12) - species 3 - id 276
+Average adjusted fitness: 0.500
+Mean genetic distance 0.877, standard deviation 0.534
+Population of 20 members in 4 species (after reproduction):
+   ID   age  size   fitness   adj fit  stag
+  ====  ===  ====  =========  =======  ====
+     1   24     6     79.512    0.586     6
+     3   23     4     90.427    0.420     3
+    21    7     5     49.910    0.356     5
+    24    5     5     63.115    0.639     3
+Total extinctions: 0
+Generation time: 1549.994 sec (1350.349 average)
+Saving checkpoint to /docker-ros/ws/RIA/evoluciones/dir_c4f_s7/chk/p2-25
+
+Best individual in generation 24 meets fitness threshold - complexity: (3, 12)
+
+Evolución terminada. Mejor calidad: 90.4
+### closed connection ###
