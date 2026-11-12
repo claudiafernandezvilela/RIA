@@ -13,14 +13,14 @@ para C1-C4 (12/12 episodios completados).
 | `calidad.py` | Función de calidad (`python3 calidad.py` la comprueba con episodios inventados, sin simulador) |
 | `config-p2.ini` | Configuración de NEAT (6 entradas, 2 salidas, población 20) |
 | `config_c4_final.json` | Configuración final del entorno y de la calidad, aplicada sobre `config.json` |
-| `config_c4_dir.json`, `config_c4_parada.json` | Configuraciones de formulaciones anteriores (ver `evoluciones/README.md`) |
+| `config_descartadas/` | Configuraciones de formulaciones anteriores y pruebas descartadas (ver `evoluciones/README.md`); se usan con `--config-json config_descartadas/<fichero>` |
 | `env.py` | Entorno de la P1 (`RoboboSeguirEnv`): observación, acción, fin de episodio y lectura del simulador |
 | `config.json` | Configuración base del entorno (calibración, límites, umbrales del anexo B) |
 | `evaluar.py --genoma` | Evaluación con el protocolo del anexo B |
 | `curvas_p2.py` | Curvas de calidad y especiación a partir de `evolucion.csv` |
 | `red_p2.py` | Figura de la topología de un genoma y lista de sus conexiones |
 | `reevaluar.py` | Reevalúa los mejores genomas de una evolución (pruebas) |
-| `evoluciones/<etiqueta>/` | Cada evolución: configuración, CSV, mejores genomas y puntos de control ([README](evoluciones/README.md)) |
+| `evoluciones/<etiqueta>/` | Cada evolución: configuración, CSV, mejores genomas, puntos de control y salida de la consola ([README](evoluciones/README.md)) |
 | `p2_eval/` | Registros y métricas de la evaluación ([README](p2_eval/README.md)) |
 | `xor/` | Prueba de NEAT-Python con el XOR de las indicaciones |
 | `memoria/` | Memoria de la P2 |

@@ -54,8 +54,8 @@ Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
 | Carpeta | Origen | Generaciones | Pasos | Población | Episodios por individuo | Banda de la calidad |
 |---|---|---|---|---|---|---|
 | `inc_s2c_w40_c4/` | Continuación de `inc_s2c_w40` desde `chk/p2-40` | 40-59 | 300 | 30 | 1 | 0,25-0,45 m |
-| `dir_c4_s5/` | Desde cero, semilla 5 (`config_c4_dir.json`) | 0-34 | 200 | 20 | 2 | 0,30-0,45 m |
-| `dir_c4p_s6/` | Desde cero, semilla 6, con el término de parada y la penalización (`config_c4_parada.json`) | 0-16, detenida: no aprende | 200 | 20 | 2 | 0,30-0,45 m |
+| `dir_c4_s5/` | Desde cero, semilla 5 (`config_descartadas/config_c4_dir.json`) | 0-34 | 200 | 20 | 2 | 0,30-0,45 m |
+| `dir_c4p_s6/` | Desde cero, semilla 6, con el término de parada y la penalización (`config_descartadas/config_c4_parada.json`) | 0-16, detenida: no aprende | 200 | 20 | 2 | 0,30-0,45 m |
 | `dir_c4p_s7/` | Igual, semilla 7 | 0-24 | 200 | 20 | 2 | 0,30-0,45 m |
 | `dir_c4f_s6/` | Desde cero, semilla 6, configuración final (`config_c4_final.json`) | 0-24 | 200 | 20 | 2 | 0,30-0,45 m |
 | `dir_c4f_s7/` | Igual, semilla 7 | 0-24 | 200 | 20 | 2 | 0,30-0,45 m |
@@ -74,11 +74,11 @@ Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
   15 (74 en la semilla 5) y los episodios duraban unos 22 pasos de media.
   Con v ≥ 0, la salida tanh nunca da v = 0 exacta, así que pararse era
   imposible y la penalización castigaba a todos por igual. Consola en
-  `../consola_dir_c4p_s6.log`. La semilla 7 (`dir_c4p_s7`) sí avanza, a un
+  `dir_c4p_s6/consola.log`. La semilla 7 (`dir_c4p_s7`) sí avanza, a un
   ritmo parecido al de la semilla 5 (calidad media 12-14 en las generaciones
   20-24, frente a 13-18), pero sus mejores (293 en la generación 15, 394 en
   la 21, 431 en la 23) bajan a 12-19 al reevaluarlos en la generación
-  siguiente. Consola en `../consola_dir_c4p_s7.log`.
+  siguiente. Consola en `dir_c4p_s7/consola.log`.
 - `dir_c4f_s6` a `dir_c4f_s9` (configuración final) cambian tres cosas
   respecto a `dir_c4_s5`:
   - `v_min` = −0,05 m/s con `v_sin_marcha_atras`: la v negativa se recorta
@@ -98,7 +98,6 @@ Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
   - Se interrumpió en la generación 14 y se reanudó desde `chk/p2-14`.
     `chk_descartado/p2-15` es el punto de control de un intento fallido de
     esa reanudación (el simulador no respondía bien); no se usa.
-  - Consolas en `../consola_dir_c4f_s6.log` y `../consola_dir_c4f_s8.log`.
 - RoboboSim tiene que estar en primer plano. Con el ordenador desatendido
   (ventana en segundo plano o pantalla apagada) el simulador se comporta
   distinto: el 376, el 437 y el 310 completaron 0/9 episodios en C4 evaluados
@@ -107,7 +106,6 @@ Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
   (`../p2_eval/c4/prueba_id193`).
 - Con 2 episodios por individuo, la calidad es la media de los dos
   (`episodios_individuo.txt` en la carpeta).
-- La consola de `dir_c4_s5` está en `../consola_dir_c4_s5.log`.
 
 ## Contenido de cada carpeta
 
@@ -119,5 +117,6 @@ Paradas del guía configuradas en RoboboSim: `Stop times` 2-5 s y
 | `genomas/mejor_genNNN.pkl` | Mejor genoma de cada generación |
 | `chk/p2-N` | Punto de control: población antes de la generación N |
 | `episodios_individuo.txt` | Episodios por individuo, si no es 1 |
+| `consola.log` | Salida de la consola durante la evolución (solo en las de C4 desde cero) |
 
 `--guia` solo anota el CSV. El guía se cambia a mano en RoboboSim.
