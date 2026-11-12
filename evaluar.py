@@ -19,9 +19,10 @@ simulador, con independencia de la recompensa:
        como tal y no cuenta como completado.
   B.4  Registro por paso (CSV) y las cuatro métricas: completados,
        desenlaces, separación (% en banda y media) y desviación (media de
-       |desv| y % por debajo de desv_max_grados).
+       |desv| y % por debajo de desv_max_grados). En C4, además, las paradas
+       del guía y cuántas se superan (PARADA_* en este archivo).
 
-Todos los umbrales están en config.json.
+Los umbrales de B.1 y B.3 están en config.json.
 
 --------------------------------------------------------------------
 USO
@@ -33,6 +34,7 @@ USO
       C1  Crucero   10 - 10
       C2  Crucero   10 - 40
       C3  Variable  10 - 40
+      C4  Variable con paradas  10 - 40  (dos ejecuciones)
 
   y lanzar (el puente como en train.py):
 
@@ -77,8 +79,17 @@ import numpy as np
 
 
 RUTA_EVAL = 'p1_eval'
-CONFIGS = ('c1', 'c2', 'c3')
+CONFIGS = ('c1', 'c2', 'c3', 'c4')
 DESENLACES = ('completado', 'colisión', 'guía perdido', 'otra causa')
+
+# Paradas del guía en C4 (anexo B.1 y B.4)
+PARADA_V_MAX = 0.01     # m/s: por debajo, quieto
+PARADA_MIN_S = 0.5      # s: duración mínima, estrictamente mayor
+PARADA_MARGEN_S = 10.0  # s sin fallo tras reanudar la marcha para superarla
+# La pose del simulador repite a veces el mismo valor en los dos robots aunque
+# se estén moviendo. Un intervalo es sin dato si ambas poses no cambian y el
+# seguidor se desplaza al menos estos mm entre los pasos de alrededor.
+PARADA_CONTEXTO_MM = 10.0
 
 CAMPOS_PASO = ['t', 'paso', 'seguidor_x_mm', 'seguidor_z_mm',
                'seguidor_rot_grados', 'pelota_x_mm', 'pelota_z_mm',
@@ -298,6 +309,109 @@ def _leer_pasos(ruta):
     return np.array(seps), np.array(desvs)
 
 
+def _intervalos_sin_dato(guia_x, guia_z, seg_x, seg_z):
+    """Intervalos con la pose congelada (ver PARADA_CONTEXTO_MM)."""
+    sin_dato = np.zeros(len(guia_x) - 1, dtype=bool)
+    for i in range(len(sin_dato)):
+        if (guia_x[i] == guia_x[i + 1] and guia_z[i] == guia_z[i + 1]
+                and seg_x[i] == seg_x[i + 1] and seg_z[i] == seg_z[i + 1]):
+            a, b = max(i - 1, 0), min(i + 2, len(guia_x) - 1)
+            sin_dato[i] = (np.hypot(seg_x[b] - seg_x[a], seg_z[b] - seg_z[a])
+                           >= PARADA_CONTEXTO_MM)
+    return sin_dato
+
+
+def _tramos_quietos(t, x, z, sin_dato):
+    """Tramos en los que un robot está quieto. Devuelve (tramos, quieto):
+    tramos es una lista de (i, j), índices de los pasos inicial y final de
+    cada tramo que dura más de PARADA_MIN_S; quieto indica, para cada
+    intervalo entre dos pasos, si la velocidad es menor que PARADA_V_MAX.
+    Un intervalo sin dato solo se suma al tramo si los dos de al lado son
+    quietos con dato."""
+    dt = np.maximum(np.diff(t), 1e-6)
+    quieto = np.hypot(np.diff(x), np.diff(z)) / 1000.0 / dt < PARADA_V_MAX
+    fiable = quieto & ~sin_dato
+    efectivo = fiable.copy()
+    for i in np.flatnonzero(sin_dato):
+        efectivo[i] = (0 < i < len(quieto) - 1
+                       and fiable[i - 1] and fiable[i + 1])
+    tramos = []
+    i = 0
+    while i < len(efectivo):
+        if not efectivo[i]:
+            i += 1
+            continue
+        j = i
+        while j + 1 < len(efectivo) and efectivo[j + 1]:
+            j += 1
+        if t[j + 1] - t[i] > PARADA_MIN_S:
+            tramos.append((i, j + 1))
+        i = j + 1
+    return tramos, quieto
+
+
+def analizar_paradas(t, guia_x, guia_z, seg_x, seg_z, desenlace):
+    """Paradas del guía en un episodio (anexo B.1 y B.4), con la pose en mm.
+    Devuelve el resultado de cada una:
+      'superada'     el seguidor se detiene y sigue sin fallo
+                     PARADA_MARGEN_S después de que el guía reanude
+      'no_detenido'  sin fallo, pero el seguidor no llega a detenerse
+      'fallo'        el episodio falla antes de cumplirse ese margen
+      'sin_margen'   el episodio se completa antes de cumplirse el margen, o
+                     con el guía aún parado: no se puede decidir
+    La espera inicial del guía, antes de moverse por primera vez, no es una
+    parada. El seguidor se considera detenido si tiene un tramo quieto, con
+    los mismos umbrales que el guía, que se solape con la parada."""
+    if len(t) < 2:
+        return []
+    sin_dato = _intervalos_sin_dato(guia_x, guia_z, seg_x, seg_z)
+    tramos, quieto = _tramos_quietos(t, guia_x, guia_z, sin_dato)
+    if quieto.all():
+        return []
+    primero = int(np.argmin(quieto))     # primer intervalo en movimiento
+    tramos_seg, _ = _tramos_quietos(t, seg_x, seg_z, sin_dato)
+    t_fin = t[-1]
+    resultados = []
+    for i, j in tramos:
+        if i < primero:
+            continue
+        sigue_parado = j == len(t) - 1
+        t_reanuda = t_fin if sigue_parado else t[j]
+        if not sigue_parado and t_fin >= t_reanuda + PARADA_MARGEN_S:
+            detenido = any(t[a] <= t_reanuda and t[b] >= t[i]
+                           for a, b in tramos_seg)
+            resultados.append('superada' if detenido else 'no_detenido')
+        elif desenlace == 'completado':
+            resultados.append('sin_margen')
+        else:
+            resultados.append('fallo')
+    return resultados
+
+
+def _leer_paradas(ruta, desenlace):
+    """Resultado de cada parada del guía a partir de un CSV de pasos. La
+    velocidad del guía se calcula con la pelota, solidaria a él."""
+    columnas = ('t', 'pelota_x_mm', 'pelota_z_mm',
+                'seguidor_x_mm', 'seguidor_z_mm')
+    with open(ruta) as f:
+        filas = [[float(fila[c]) for c in columnas]
+                 for fila in csv.DictReader(f)
+                 if all(fila[c] != '' for c in columnas)]
+    if not filas:
+        return []
+    return analizar_paradas(*np.array(filas).T, desenlace)
+
+
+def contar_paradas(episodios):
+    """Número de paradas de cada resultado en una lista de episodios."""
+    cuenta = {'superada': 0, 'no_detenido': 0, 'fallo': 0, 'sin_margen': 0}
+    for e in episodios:
+        if os.path.exists(e['_csv']):
+            for resultado in _leer_paradas(e['_csv'], e['desenlace']):
+                cuenta[resultado] += 1
+    return cuenta
+
+
 def calcular_metricas(episodios, cfg):
     """Métricas del anexo B.4 sobre una lista de filas de episodios.csv.
     Los porcentajes de separación y desviación se calculan sobre el total
@@ -384,6 +498,20 @@ def modo_metricas(args):
                     m['pct_banda'], m['sep_media'], m['desv_media'],
                     m['pct_desv']))
         lineas.append('')
+
+        en_c4 = [e for e in de_pol if e['config'] == 'c4']
+        if en_c4:
+            p = contar_paradas(en_c4)
+            lineas += ['Paradas del guía en C4:', '',
+                       '| Episodios | Paradas | Superadas | '
+                       'Seguidor no detenido | Fallo antes de {:.0f} s | '
+                       'Sin margen de {:.0f} s |'.format(PARADA_MARGEN_S,
+                                                          PARADA_MARGEN_S),
+                       '|---|---|---|---|---|---|',
+                       '| {} | {} | {} | {} | {} | {} |'.format(
+                           len(en_c4), sum(p.values()), p['superada'],
+                           p['no_detenido'], p['fallo'], p['sin_margen']),
+                       '']
 
     texto = '\n'.join(lineas)
     print(texto)
