@@ -24,7 +24,7 @@ Uso desde el bucle de evaluación:
     from calidad import calidad
     registro = []                       # un info por paso
     ...
-    genoma.fitness = calidad(registro, n_max=PASOS_EVAL)
+    genoma.fitness = calidad(registro, PASOS_EVAL, cfg)   # cfg: entorno.json
 
 Comprobación sin simulador (episodios inventados):
 
@@ -129,22 +129,27 @@ def paradas_no_superadas(registro, parado):
     return n
 
 
-def calidad(registro, n_max, banda=None, parada=False, penalizacion=True):
+def calidad(registro, n_max, cfg=None):
     """Calidad del episodio a partir de los info de cada paso.
 
     Un paso cuenta como vivo si en él no se ha producido ningún fallo
     (choque, perdido o atascado): el paso del fallo ya no suma.
 
-    `banda` (cerca, lejos) en metros sustituye a SEP_BANDA_M. Lo usa la
-    evolución de C4 desde cero (calidad_banda_m en su entorno.json): con
-    0,30-0,45 m el seguidor no puntúa al máximo pegado a 0,25 m, donde la
-    pelota empieza a salirse de la imagen por abajo (unos 0,23 m).
-
-    `parada` activa el término de parada (calidad_parada en entorno.json).
-    `penalizacion` = False quita la resta de P_PARADA por parada no
-    superada y deja solo el factor (calidad_penalizacion en entorno.json).
+    `cfg` es la configuración del entorno de la evolución (su entorno.json).
+    De ella se leen tres opciones; sin cfg, o si no están, se usa la primera
+    formulación:
+      - calidad_banda_m (cerca, lejos) en metros sustituye a SEP_BANDA_M.
+        Con 0,30-0,45 m el seguidor no puntúa al máximo pegado a 0,25 m,
+        donde la pelota empieza a salirse de la imagen por abajo (unos
+        0,23 m).
+      - calidad_parada activa el término de parada.
+      - calidad_penalizacion = false quita la resta de P_PARADA por parada
+        no superada y deja solo el factor.
     """
-    banda = tuple(banda) if banda is not None else SEP_BANDA_M
+    cfg = cfg or {}
+    banda = tuple(cfg.get('calidad_banda_m') or SEP_BANDA_M)
+    parada = bool(cfg.get('calidad_parada'))
+    penalizacion = bool(cfg.get('calidad_penalizacion', True))
     corte = sin_arranque(registro)
     if corte is not None:
         registro = registro[:corte]

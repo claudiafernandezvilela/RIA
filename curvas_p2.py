@@ -30,9 +30,11 @@ Imprime además los datos del pie de la figura que pide el enunciado
 complejidad del mejor genoma de la última generación.
 
 Uso:
-  python3 curvas_p2.py --etiquetas c1_s2 --salida figuras/evolucion_c1_s2.png
-  python3 curvas_p2.py --etiquetas inc_s2 inc_s3 --referencia 60 --por-config \\
-                       --salida figuras/evolucion_inc.png
+  python3 curvas_p2.py --etiquetas dir_c4f_s6 --salida figuras/evolucion_c4f.png
+  python3 curvas_p2.py --etiquetas dir_c4f_s6 dir_c4f_s7 \\
+                       --salida figuras/evolucion_c4f_semillas.png
+  python3 curvas_p2.py --etiquetas inc_s2c_w40 --por-config \\
+                       --salida figuras/evolucion_s2.png
 """
 
 import argparse
@@ -289,7 +291,7 @@ def figura_etapa(series, guia, args):
 def main():
     p = argparse.ArgumentParser(description='Curvas de la evolución (P2).')
     p.add_argument('--etiquetas', nargs='+', required=True,
-                   help='evoluciones, una por semilla (c1_s1 c1_s2 ...)')
+                   help='evoluciones, una por semilla (dir_c4f_s6 dir_c4f_s7 ...)')
     p.add_argument('--eje', choices=['generaciones', 'pasos'],
                    default='generaciones',
                    help='eje horizontal: generación o pasos del entorno '

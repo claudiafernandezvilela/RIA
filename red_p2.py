@@ -16,8 +16,8 @@ Las activaciones de NEAT-Python están escaladas: cada nodo calcula
 tanh(2,5·(sesgo + Σ peso·entrada)).
 
 Uso:
-  python3 red_p2.py --genoma evoluciones/c1_s2/genomas/mejor_gen020.pkl \\
-                    --salida figuras/red_c1.png
+  python3 red_p2.py --genoma evoluciones/dir_c4f_s6/genomas/mejor_gen024.pkl \\
+                    --salida figuras/red_437.png
 """
 
 import argparse

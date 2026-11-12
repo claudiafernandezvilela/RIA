@@ -38,11 +38,11 @@ def recorrido(puntos):
                for a, b in zip(puntos, puntos[1:])) / 1000.0
 
 
-def resumen(registro, n_max):
+def resumen(registro, n_max, cfg):
     seps = [i['separacion'] for i in registro if i.get('separacion') is not None]
     vis = [i for i in registro if i.get('visible')]
     return {
-        'calidad': round(calidad(registro, n_max), 2),
+        'calidad': round(calidad(registro, n_max, cfg), 2),
         'pasos': len(registro),
         'desenlace': desenlace(registro),
         'sep_ini': round(seps[0], 3),
@@ -98,7 +98,7 @@ def main():
                   .format(g.key, gen, g.fitness))
             for ep in range(1, args.episodios + 1):
                 r = resumen(evaluar_genoma(env, red, args.pasos_max),
-                            args.pasos_max)
+                            args.pasos_max, cfg)
                 filas.append(dict(id=g.key, generacion=gen, episodio=ep, **r))
                 print('  ep {}  calidad {:5.1f}  pasos {:3d} {:9s} sep '
                       '{:.2f}/{:.2f}/{:.2f}  banda {:3.0f}%  visible {:3.0f}%  '

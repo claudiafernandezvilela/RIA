@@ -2,29 +2,35 @@
 """
 Práctica 2 — Evolución del controlador del seguidor con NEAT-Python.
 
-Cada genoma se traduce en una red que conduce al seguidor durante un
-episodio del entorno de la P1 (RoboboSeguirEnv). Con los info de cada paso
-se calcula su calidad (calidad.py) y NEAT selecciona, cruza y muta.
+Cada genoma se traduce en una red que conduce al seguidor en uno o varios
+episodios del entorno de la P1 (RoboboSeguirEnv). Con los info de cada paso
+se calcula su calidad (calidad.py; la media si hay varios episodios) y NEAT
+selecciona, cruza y muta.
+
+Los valores por defecto son los de la configuración final (controlador
+437, evoluciones/dir_c4f_s6): config_c4_final.json, episodios de 200 pasos,
+2 episodios por individuo y 25 generaciones, con la población de
+config-p2.ini (20).
 
 --------------------------------------------------------------------
 USO
 --------------------------------------------------------------------
 
   0. RoboboSim con "Follow City" y el guía en la configuración que se va a
-     evolucionar (p. ej. C2: crucero, 10-40). El guía se configura A MANO en
-     el simulador: el script no lo cambia, sólo lo anota (--guia).
+     evolucionar (C4: Variable 10-40 con paradas, Stop times 2-5 s, Stop
+     chances 60). El guía se configura A MANO en el simulador: el script no
+     lo cambia, sólo lo anota (--guia). RoboboSim tiene que estar en primer
+     plano durante toda la evolución.
 
      Puente (otra terminal):
          ros2 run robobo_ros2 robobo_container --ros-args \\
               -p ip:=host.docker.internal -p modules:="['blob','sim']"
 
-  1. Evolución nueva:
-         python3 evolucionar.py --etiqueta c2_s1 --guia c2 --semilla 1 \\
-                                --generaciones 20
+  1. Evolución nueva (la del controlador final):
+         python3 evolucionar.py --etiqueta dir_c4f_s6 --guia c4 --semilla 6
 
   2. Si se corta (puente colgado, Ctrl-C...): relanzar el puente y
-         python3 evolucionar.py --etiqueta c2_s1 --guia c2 --reanudar \\
-                                --generaciones 20
+         python3 evolucionar.py --etiqueta dir_c4f_s6 --guia c4 --reanudar
 
      Para la evolución incremental se reanuda con otra configuración del
      guía puesta en el simulador (--guia c3) y, si hace falta, otra duración
@@ -176,11 +182,12 @@ def desenlace(registro):
     return 'completo'
 
 
-def hacer_eval_genomes(env, n_max, episodios=1, banda=None, parada=False,
-                       penalizacion=True):
+def hacer_eval_genomes(env, n_max, episodios=1):
     """Función de evaluación que se pasa a Population.run(). Cada individuo
     se evalúa en `episodios` episodios y su calidad es la media: con las
     paradas aleatorias de C4, un solo episodio premia al que tuvo suerte.
+    Las opciones de la calidad se leen de la configuración del entorno
+    (env.cfg, copia de entorno.json).
     Si falla la comunicación (el entorno lanza RuntimeError) o falta la
     separación real (calidad lanza ValueError), la excepción se deja subir:
     no se asigna calidad 0 a un individuo por un fallo de la
@@ -193,8 +200,7 @@ def hacer_eval_genomes(env, n_max, episodios=1, banda=None, parada=False,
             cals, pasos, finales = [], [], []
             for _ in range(episodios):
                 registro = evaluar_genoma(env, red, n_max)
-                cals.append(calidad(registro, n_max, banda, parada,
-                                    penalizacion))
+                cals.append(calidad(registro, n_max, env.cfg))
                 pasos.append(str(len(registro)))
                 finales.append(desenlace(registro))
             genoma.fitness = statistics.mean(cals)
@@ -257,22 +263,22 @@ def main():
     p = argparse.ArgumentParser(
         description='Práctica 2 de RIA: evolución del seguidor con NEAT.')
     p.add_argument('--etiqueta', required=True,
-                   help='nombre de la evolución (p. ej. c2_s1); carpeta '
+                   help='nombre de la evolución (p. ej. dir_c4f_s6); carpeta '
                         'evoluciones/<etiqueta>/')
     p.add_argument('--guia', required=True, choices=['c1', 'c2', 'c3', 'c4'],
                    help='configuración del guía puesta en el simulador '
                         '(sólo se anota en el CSV)')
-    p.add_argument('--semilla', type=int, default=1,
+    p.add_argument('--semilla', type=int, default=6,
                    help='semilla de NEAT (evolución nueva)')
-    p.add_argument('--generaciones', type=int, default=20,
+    p.add_argument('--generaciones', type=int, default=25,
                    help='número TOTAL de generaciones de la evolución')
     p.add_argument('--pasos-max', type=int, default=None,
                    help='duración máxima del episodio en pasos de ~0,4 s '
-                        '(125 = 50 s, por defecto); al reanudar, por defecto '
+                        '(200 por defecto); al reanudar, por defecto '
                         'la de la última generación')
-    p.add_argument('--config-json', default='config_c3.json',
-                   help='valores aplicados sobre config.json (observación '
-                        'de 6 entradas, tilt 100); sólo en evolución nueva')
+    p.add_argument('--config-json', default='config_c4_final.json',
+                   help='valores aplicados sobre config.json (entorno y '
+                        'opciones de la calidad); sólo en evolución nueva')
     p.add_argument('--reanudar', action='store_true',
                    help='continuar desde el último punto de control')
     p.add_argument('--poblacion', type=int, default=None,
@@ -280,7 +286,7 @@ def main():
                         'por defecto); sólo en evolución nueva')
     p.add_argument('--episodios-individuo', type=int, default=None,
                    help='episodios por individuo; la calidad es la media '
-                        '(1 por defecto). Se guarda en la carpeta y al '
+                        '(2 por defecto). Se guarda en la carpeta y al '
                         'reanudar se usa el guardado si no se indica')
     args = p.parse_args()
 
@@ -298,12 +304,12 @@ def main():
         if args.pasos_max is None:
             with open(ruta_csv) as f:
                 filas = list(csv.DictReader(f))
-            args.pasos_max = int(filas[-1]['pasos_max']) if filas else 125
+            args.pasos_max = int(filas[-1]['pasos_max']) if filas else 200
         print('Reanudando {} desde {} (generación {})'.format(
             args.etiqueta, os.path.basename(chk), poblacion.generation))
     else:
         if args.pasos_max is None:
-            args.pasos_max = 125
+            args.pasos_max = 200
         preparar_carpeta(args, carpeta)
         config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                              neat.DefaultSpeciesSet, neat.DefaultStagnation,
@@ -341,7 +347,8 @@ def main():
         with open(ruta_epi) as f:
             guardado = int(f.read().split()[0])
     if args.episodios_individuo is None:
-        args.episodios_individuo = guardado or 1
+        # Las evoluciones antiguas sin el fichero usaban 1
+        args.episodios_individuo = guardado or (1 if args.reanudar else 2)
     if args.episodios_individuo < 1:
         raise SystemExit('--episodios-individuo debe ser 1 o más.')
     if args.episodios_individuo != guardado:
@@ -363,10 +370,7 @@ def main():
                           config=cfg)
     try:
         mejor = poblacion.run(
-            hacer_eval_genomes(env, args.pasos_max, args.episodios_individuo,
-                               cfg.get('calidad_banda_m'),
-                               bool(cfg.get('calidad_parada')),
-                               bool(cfg.get('calidad_penalizacion', True))),
+            hacer_eval_genomes(env, args.pasos_max, args.episodios_individuo),
             faltan)
         with open(os.path.join(carpeta, 'mejor_genoma.pkl'), 'wb') as f:
             pickle.dump(mejor, f)
