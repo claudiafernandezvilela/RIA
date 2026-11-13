@@ -5,7 +5,8 @@ NEAT-Python sobre el entorno de la P1.
 
 **Controlador final: id 437, semilla 6**
 (`evoluciones/semilla6/controlador_final_s6_id437.pkl`). Es un único
-controlador para C1-C4: completa los 12 episodios de la evaluación.
+controlador para C1-C4: completa los 11 episodios de la evaluación
+(3 en C1, C2 y C3; 2 en C4, como pide el anexo B).
 
 ## Archivos
 
@@ -33,9 +34,9 @@ evolucionaron desde cero con el guía en C4: 25 generaciones, población 20 y
 
 | Semilla | Evolución | Controlador | Evaluación | Completa | En banda | Paradas superadas en C4 |
 |---|---|---|---|---|---|---|
-| 6 | `evoluciones/semilla6/` | **`controlador_final_s6_id437.pkl`** (final) | `p2_eval/controlador_final_s6_id437/` | **C1-C4: 12/12** | **72,7 %** | 11 de 13 |
-| 7 | `evoluciones/semilla7/` | `controlador_s7_id276.pkl` | `p2_eval/controlador_s7_id276/` | C1-C4: 12/12 | 66,6 % | 9 de 15 |
-| 9 | `evoluciones/semilla9/` | `controlador_s9_id313.pkl` | `p2_eval/controlador_s9_id313/` | C4: 3/3 | 64,8 % | 15 de 19 |
+| 6 | `evoluciones/semilla6/` | **`controlador_final_s6_id437.pkl`** (final) | `p2_eval/controlador_final_s6_id437/` | **C1-C4: 11/11** | **73,7 %** | 9 de 10 |
+| 7 | `evoluciones/semilla7/` | `controlador_s7_id276.pkl` | `p2_eval/controlador_s7_id276/` | C1-C4: 11/11 | 67,0 % | 9 de 11 |
+| 9 | `evoluciones/semilla9/` | `controlador_s9_id313.pkl` | `p2_eval/controlador_s9_id313/` | C4: 2/2 | 60,4 % | 9 de 13 |
 
 - "En banda": porcentaje de pasos con la separación entre 0,20 y 0,45 m.
 - No se cuentan las paradas que ocurren al final del episodio, sin los 10 s

@@ -38,6 +38,10 @@ el repositorio y usan los nombres antiguos de las carpetas entregadas:
 | `p2_eval/c4/c4f_id276` | `../p2_eval/controlador_s7_id276` |
 | `p2_eval/c4/c4f_s9_id313` | `../p2_eval/controlador_s9_id313` |
 
+Las cifras de C4 del 437, el 276 y el 313 en `p2_eval/c4/README.md`
+(3 episodios) son de una evaluación anterior. En la entrega, la C4 de los
+tres se repitió con 2 episodios, como pide el anexo B.
+
 Las evaluaciones del 310, el 376 y el 193 (`p2_eval/c4/c4f_s6_id*`,
 `prueba_id193`) son genomas de la semilla 6 y conservan en sus ficheros el
 nombre `p2_dir_c4f_s6`.

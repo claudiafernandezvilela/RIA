@@ -6,12 +6,12 @@ Banda objetivo 0.20-0.45 m · desviación < 15° · colisión < 0.12 m · perdid
 
 | Config. | Episodios | Completados | Colisión | Guía perdido | Otra causa | % pasos en banda | Separación media (m) | Desviación media (°) | % pasos < 15° |
 |---|---|---|---|---|---|---|---|---|---|
-| C4 | 3 | 3 (100 %) | 0 | 0 | 0 | 64.8 | 0.431 | 4.2 | 97.9 |
-| **Total** | 3 | 3 (100 %) | 0 | 0 | 0 | 64.8 | 0.431 | 4.2 | 97.9 |
+| C4 | 2 | 2 (100 %) | 0 | 0 | 0 | 60.4 | 0.437 | 3.1 | 99.5 |
+| **Total** | 2 | 2 (100 %) | 0 | 0 | 0 | 60.4 | 0.437 | 3.1 | 99.5 |
 
 Paradas del guía en C4:
 
 | Episodios | Paradas | Superadas | Seguidor no detenido | Fallo antes de 10 s | Sin margen de 10 s |
 |---|---|---|---|---|---|
-| 3 | 21 | 15 | 4 | 0 | 2 |
+| 2 | 16 | 9 | 4 | 0 | 3 |
 
