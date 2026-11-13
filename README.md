@@ -109,6 +109,8 @@ python3 evaluar.py --metricas --carpeta p2_eval/controlador_final_s6_id437
 
 ```bash
 python3 curvas_p2.py --etiquetas semilla6 --salida figuras/evolucion_semilla6.png
+python3 curvas_p2.py --etiquetas semilla7 --salida figuras/evolucion_semilla7.png
+python3 curvas_p2.py --etiquetas semilla9 --salida figuras/evolucion_semilla9.png
 python3 curvas_p2.py --etiquetas semilla6 semilla7 semilla9 --salida figuras/evolucion_semillas.png
 python3 red_p2.py --genoma evoluciones/semilla6/controlador_final_s6_id437.pkl --salida figuras/red_437.png
 ```

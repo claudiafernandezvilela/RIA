@@ -90,10 +90,12 @@ def dibujar_red(genoma, config, nombres_entrada, nombres_salida, ruta,
         ax.annotate('', xy=pos[b], xytext=pos[a], arrowprops=dict(
             arrowstyle='->', lw=0.5 + 1.5 * min(abs(w), 3) / 3, color=color,
             shrinkA=9, shrinkB=9))
-        # Valor del peso a un tercio del camino, para que no se solapen
-        # en el nodo de llegada
-        xm = pos[a][0] + (pos[b][0] - pos[a][0]) / 3
-        ym = pos[a][1] + (pos[b][1] - pos[a][1]) / 3
+        # Valor del peso cerca del origen y a distinta altura del camino
+        # según la salida de llegada, para que no se solapen donde las
+        # conexiones se cruzan
+        frac = 0.22 + 0.24 * (capas[-1].index(b) % 2 if b in capas[-1] else 0.5)
+        xm = pos[a][0] + (pos[b][0] - pos[a][0]) * frac
+        ym = pos[a][1] + (pos[b][1] - pos[a][1]) * frac
         ax.text(xm, ym, '{:+.2f}'.format(w), fontsize=6, color=color,
                 ha='center', va='center',
                 bbox=dict(boxstyle='round,pad=0.1', fc='white', ec='none'))
