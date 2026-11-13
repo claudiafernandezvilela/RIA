@@ -73,6 +73,7 @@ import argparse
 import csv
 import glob
 import os
+import sys
 import time
 
 import numpy as np
@@ -217,6 +218,9 @@ def modo_ejecutar(args):
         # entrenamiento), porque la escala de la acción (v_min, v_max,
         # w_max) tiene que ser la misma. Para la política aleatoria, o un
         # modelo antiguo sin copia, config.json con --config-json encima.
+        # train.py de la P1 está en p1/
+        sys.path.insert(0, os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), 'p1'))
         from train import cargar_algoritmo, config_de_modelo, ruta_modelo
         if not args.aleatorio:
             ruta = args.modelo or ruta_modelo(args.algoritmo, args.etiqueta)

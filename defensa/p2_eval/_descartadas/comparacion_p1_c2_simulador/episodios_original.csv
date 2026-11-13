@@ -1,0 +1,9 @@
+politica,config,episodio,desenlace,detalle,duracion_s,pasos,fecha
+p1_modelo_sac_c1_s1,c1,1,completado,,120.55,304,2026-11-13 15:57:15
+p2_semilla6_id437,c1,1,completado,,120.36,328,2026-11-13 16:00:16
+p1_modelo_sac_c2_s2,c2,1,guía perdido,sin ver 3.2 s,16.55,41,2026-11-13 16:01:42
+p1_modelo_sac_c2_s2,c2,2,guía perdido,sep=0.929 m,31.90,79,2026-11-13 16:04:43
+p1_modelo_sac_c2_s2,c2,3,completado,,120.55,302,2026-11-13 16:07:20
+p2_semilla6_id437,c2,1,completado,,120.55,331,2026-11-13 16:11:53
+p2_semilla6_id437,c3,1,completado,,120.16,328,2026-11-13 16:21:09
+p1_modelo_sac_c3_tilt100_s1,c3,1,completado,,120.35,303,2026-11-13 16:24:44
