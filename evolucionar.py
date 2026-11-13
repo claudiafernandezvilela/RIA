@@ -8,7 +8,7 @@ se calcula su calidad (calidad.py; la media si hay varios episodios) y NEAT
 selecciona, cruza y muta.
 
 Los valores por defecto son los de la configuración final (controlador
-437, evoluciones/dir_c4f_s6): config_c4_final.json, episodios de 200 pasos,
+437, evoluciones/semilla6): config_c4_final.json, episodios de 200 pasos,
 2 episodios por individuo y 25 generaciones, con la población de
 config-p2.ini (20).
 
@@ -27,10 +27,10 @@ USO
               -p ip:=host.docker.internal -p modules:="['blob','sim']"
 
   1. Evolución nueva (la del controlador final):
-         python3 evolucionar.py --etiqueta dir_c4f_s6 --guia c4 --semilla 6
+         python3 evolucionar.py --etiqueta semilla6 --guia c4 --semilla 6
 
   2. Si se corta (puente colgado, Ctrl-C...): relanzar el puente y
-         python3 evolucionar.py --etiqueta dir_c4f_s6 --guia c4 --reanudar
+         python3 evolucionar.py --etiqueta semilla6 --guia c4 --reanudar
 
      Para la evolución incremental se reanuda con otra configuración del
      guía puesta en el simulador (--guia c3) y, si hace falta, otra duración
@@ -263,7 +263,7 @@ def main():
     p = argparse.ArgumentParser(
         description='Práctica 2 de RIA: evolución del seguidor con NEAT.')
     p.add_argument('--etiqueta', required=True,
-                   help='nombre de la evolución (p. ej. dir_c4f_s6); carpeta '
+                   help='nombre de la evolución (p. ej. semilla6); carpeta '
                         'evoluciones/<etiqueta>/')
     p.add_argument('--guia', required=True, choices=['c1', 'c2', 'c3', 'c4'],
                    help='configuración del guía puesta en el simulador '

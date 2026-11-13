@@ -6,7 +6,7 @@ La figura conjunta tiene dos paneles que comparten el eje horizontal
 (generaciones, o pasos del entorno acumulados con --eje pasos, para comparar
 con las curvas de la P1):
   - Calidad (arriba): la del mejor individuo de cada generación (cada
-    individuo se evalúa en un episodio, así que es ruidosa) y la media de la
+    individuo se evalúa en pocos episodios, así que es ruidosa) y la media de la
     población con su desviación típica como banda. Línea de referencia en
     100, el máximo de la función de calidad, y, con --referencia, la calidad
     del controlador programado a mano.
@@ -30,11 +30,11 @@ Imprime además los datos del pie de la figura que pide el enunciado
 complejidad del mejor genoma de la última generación.
 
 Uso:
-  python3 curvas_p2.py --etiquetas dir_c4f_s6 --salida figuras/evolucion_c4f.png
-  python3 curvas_p2.py --etiquetas dir_c4f_s6 dir_c4f_s7 \\
-                       --salida figuras/evolucion_c4f_semillas.png
-  python3 curvas_p2.py --etiquetas inc_s2c_w40 --por-config \\
-                       --salida figuras/evolucion_s2.png
+  python3 curvas_p2.py --etiquetas semilla6 --salida figuras/evolucion_semilla6.png
+  python3 curvas_p2.py --etiquetas semilla6 semilla7 semilla9 \\
+                       --salida figuras/evolucion_semillas.png
+  python3 curvas_p2.py --etiquetas ../defensa/evoluciones/inc_s2c_w40 \\
+                       --por-config --salida defensa/figuras/evolucion_s2.png
 """
 
 import argparse
@@ -72,7 +72,8 @@ ALTO_ETAPA_CM = 6.5
 
 def leer_evolucion(etiqueta):
     """Columnas de evolucion.csv como arrays, una fila por generación, y el
-    tamaño de la población de config-p2.ini."""
+    tamaño de la población de config-p2.ini y los episodios por individuo
+    (episodios_individuo.txt; 1 si no existe)."""
     carpeta = os.path.join(RUTA_EVOLUCIONES, etiqueta)
     with open(os.path.join(carpeta, 'evolucion.csv')) as f:
         filas = list(csv.DictReader(f))
@@ -80,6 +81,11 @@ def leer_evolucion(etiqueta):
     ini.read(os.path.join(carpeta, 'config-p2.ini'))
     col = lambda k, t=float: np.array([t(x[k]) for x in filas])
     # tam_especies: 'id:n;id:n;...' -> {id: n} por generación
+    episodios = 1
+    ruta_epi = os.path.join(carpeta, 'episodios_individuo.txt')
+    if os.path.exists(ruta_epi):
+        with open(ruta_epi) as f:
+            episodios = int(f.read().split()[0])
     especies = [dict(map(int, par.split(':')) for par in x['tam_especies'].split(';'))
                 for x in filas]
     return dict(etiqueta=etiqueta, gen=col('generacion', int),
@@ -91,7 +97,8 @@ def leer_evolucion(etiqueta):
                 desv=col('cal_desv'), especies=especies,
                 nodos=col('nodos_mejor', int),
                 conexiones=col('conexiones_mejor', int),
-                poblacion=ini.getint('NEAT', 'pop_size'))
+                poblacion=ini.getint('NEAT', 'pop_size'),
+                episodios=episodios)
 
 
 def de_guia(s, guia):
@@ -116,10 +123,11 @@ def pie(s):
     duraciones = sorted(set(s['pasos_max']))
     texto_dur = ' y '.join('{} pasos (~{:.0f} s)'.format(
         d, d * SEGUNDOS_POR_PASO) for d in duraciones)
-    return ('{}: población {}, 1 episodio por individuo, duración máxima {}, '
+    return ('{}: población {}, {} episodio{} por individuo, duración máxima {}, '
             '{} generaciones, {} evaluaciones, {:.0f} pasos del entorno, '
             '{:.1f} h. Mejor genoma final: {} nodos y {} conexiones '
-            'activas'.format(s['etiqueta'], s['poblacion'], texto_dur,
+            'activas'.format(s['etiqueta'], s['poblacion'], s['episodios'],
+                             '' if s['episodios'] == 1 else 's', texto_dur,
                              len(s['gen']), s['evaluaciones'][-1],
                              s['pasos'][-1], s['segundos'][-1] / 3600,
                              s['nodos'][-1], s['conexiones'][-1]))
@@ -291,7 +299,7 @@ def figura_etapa(series, guia, args):
 def main():
     p = argparse.ArgumentParser(description='Curvas de la evolución (P2).')
     p.add_argument('--etiquetas', nargs='+', required=True,
-                   help='evoluciones, una por semilla (dir_c4f_s6 dir_c4f_s7 ...)')
+                   help='evoluciones, una por semilla (semilla6 semilla7 ...)')
     p.add_argument('--eje', choices=['generaciones', 'pasos'],
                    default='generaciones',
                    help='eje horizontal: generación o pasos del entorno '

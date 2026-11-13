@@ -304,7 +304,7 @@ tabla([
      'Con v_min = 0 pararse era imposible: la penalización castigaba a todos '
      'por igual y la evolución no avanzaba (s6) o avanzaba lento (s7)'],
     ['F4 (final)', 'F2 + término de parada sin penalización; v_min −0,05 '
-     'recortada y memoria del tamaño', '`dir_c4f_s6`, `_s7`, `_s8`, `_s9`',
+     'recortada y memoria del tamaño', '`semilla6`, `semilla7`, `semilla9` (y `dir_c4f_s8`)',
      'id 437: 12/12 en C1-C4; se detiene en las paradas'],
 ], [0.8, 2.6, 2.0, 3.6], 'Formulaciones de la calidad y comportamientos a los '
    'que dieron lugar.')
@@ -347,10 +347,10 @@ par('Controlador único evolucionado desde cero con el guía en C4 y la '
 tabla([
     ['Evolución', 'Semilla', 'Generaciones', 'Evaluaciones', 'Pasos',
      'Horas', 'Mejor (última gen.)', 'Media (última gen.)'],
-    ['`dir_c4f_s6`', '6', '25', '1000', '63 905', '7,35', '94,6', '58,6'],
-    ['`dir_c4f_s7`', '7', '25', '1000', '59 736', '6,40', '90,4', '40,2'],
+    ['`semilla6`', '6', '25', '1000', '63 905', '7,35', '94,6', '58,6'],
+    ['`semilla7`', '7', '25', '1000', '59 736', '6,40', '90,4', '40,2'],
     ['`dir_c4f_s8`', '8', '25', '1000', '32 696', '3,90', '15,1', '8,9'],
-    ['`dir_c4f_s9`', '9', '[PENDIENTE]', '', '', '', '', ''],
+    ['`semilla9`', '9', '[PENDIENTE]', '', '', '', '', ''],
 ], [1.5, 0.8, 1.1, 1.1, 0.9, 0.8, 1.4, 1.4], 'Coste de cada evolución de la '
    'configuración final (población 20, 2 episodios por individuo, 200 '
    'pasos).')
